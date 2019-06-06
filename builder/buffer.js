@@ -19,7 +19,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const buffer_1 = require("../util/buffer");
 const compat_1 = require("../util/compat");
 /** @ignore */
-const roundLengthUpTo64Bytes = (len, BPE) => ((((len * BPE) + 63) & ~63) || 64) / BPE;
+const roundLengthUpToNearest64Bytes = (len, BPE) => ((((len * BPE) + 63) & ~63) || 64) / BPE;
 /** @ignore */
 const sliceOrExtendArray = (arr, len = 0) => (arr.length >= len ? arr.subarray(0, len) : buffer_1.memcpy(new arr.constructor(len), arr, 0));
 /** @ignore */
@@ -45,14 +45,14 @@ class BufferBuilder {
             const reserved = this.buffer.length;
             if (length >= reserved) {
                 this._resize(reserved === 0
-                    ? roundLengthUpTo64Bytes(length * 1, this.BYTES_PER_ELEMENT)
-                    : roundLengthUpTo64Bytes(length * 2, this.BYTES_PER_ELEMENT));
+                    ? roundLengthUpToNearest64Bytes(length * 1, this.BYTES_PER_ELEMENT)
+                    : roundLengthUpToNearest64Bytes(length * 2, this.BYTES_PER_ELEMENT));
             }
         }
         return this;
     }
     flush(length = this.length) {
-        length = roundLengthUpTo64Bytes(length * this.stride, this.BYTES_PER_ELEMENT);
+        length = roundLengthUpToNearest64Bytes(length * this.stride, this.BYTES_PER_ELEMENT);
         const array = sliceOrExtendArray(this.buffer, length);
         this.clear();
         return array;

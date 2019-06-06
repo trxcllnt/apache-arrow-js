@@ -24,7 +24,7 @@ export class BinaryBuilder extends VariableWidthBuilder {
         this._values = new BufferBuilder(new Uint8Array(0));
     }
     get byteLength() {
-        let size = this._pendingLength;
+        let size = this._pendingLength + (this.length * 4);
         this._offsets && (size += this._offsets.byteLength);
         this._values && (size += this._values.byteLength);
         this._nulls && (size += this._nulls.byteLength);
