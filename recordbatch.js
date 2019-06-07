@@ -22,11 +22,11 @@ const vector_1 = require("./vector");
 const schema_1 = require("./schema");
 const compat_1 = require("./util/compat");
 const chunked_1 = require("./vector/chunked");
+const index_1 = require("./vector/index");
 const args_1 = require("./util/args");
-const struct_1 = require("./vector/struct");
 const type_1 = require("./type");
 const recordbatch_1 = require("./util/recordbatch");
-class RecordBatch extends struct_1.StructVector {
+class RecordBatch extends index_1.MapVector {
     constructor(...args) {
         let data;
         let schema = args[0];
@@ -37,7 +37,7 @@ class RecordBatch extends struct_1.StructVector {
         else {
             const fields = schema.fields;
             const [, length, childData] = args;
-            data = data_1.Data.Struct(new type_1.Struct(fields), 0, length, 0, null, childData);
+            data = data_1.Data.Map(new type_1.Map_(fields), 0, length, 0, null, childData);
         }
         super(data, children);
         this._schema = schema;
@@ -45,9 +45,9 @@ class RecordBatch extends struct_1.StructVector {
     /** @nocollapse */
     static from(options) {
         if (compat_1.isIterable(options['values'])) {
-            return table_1.Table.fromStruct(struct_1.StructVector.from(options));
+            return table_1.Table.from(options);
         }
-        return struct_1.StructVector.from(options).then((struct) => table_1.Table.fromStruct(struct));
+        return table_1.Table.from(options);
     }
     /** @nocollapse */
     static new(...args) {

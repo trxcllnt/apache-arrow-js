@@ -43,10 +43,10 @@ export class Row {
     [Symbol.for('nodejs.util.inspect.custom')]() { return this.toString(); }
     toString() {
         return DataType.isStruct(this[kParent].type) ?
-            [...this].map((x) => valueToString(x)).join(', ') :
-            this[kParent].type.children.reduce((props, { name }) => {
-                return (props[name] = valueToString(this[name])) && props || props;
-            }, {});
+            `[ ${[...this].map((x) => valueToString(x)).join(', ')} ]` :
+            `{ ${this[kParent].type.children.reduce((xs, { name }) => {
+                return [...xs, `"${name}": ${valueToString(this[name])}`];
+            }, []).join(', ')} }`;
     }
 }
 /** @ignore */

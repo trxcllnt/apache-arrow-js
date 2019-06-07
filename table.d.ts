@@ -26,7 +26,7 @@ export interface Table<T extends {
     get(index: number): Struct<T>['TValue'];
     [Symbol.iterator](): IterableIterator<RowLike<T>>;
     slice(begin?: number, end?: number): Table<T>;
-    concat(...others: Vector<Struct<T>>[]): Table<T>;
+    concat(...others: Vector<Map_<T>>[]): Table<T>;
     clone(chunks?: RecordBatch<T>[], offsets?: Uint32Array): Table<T>;
     scan(next: import('./compute/dataframe').NextFunc, bind?: import('./compute/dataframe').BindFunc): void;
     countBy(name: import('./compute/predicate').Col | string): import('./compute/dataframe').CountByResult;
@@ -34,7 +34,7 @@ export interface Table<T extends {
 }
 export declare class Table<T extends {
     [key: string]: DataType;
-} = any> extends Chunked<Struct<T>> implements DataFrame<T>, Clonable<Table<T>>, Sliceable<Table<T>>, Applicative<Struct<T>, Table<T>> {
+} = any> extends Chunked<Map_<T>> implements DataFrame<T>, Clonable<Table<T>>, Sliceable<Table<T>>, Applicative<Map_<T>, Table<T>> {
     /** @nocollapse */
     static empty<T extends {
         [key: string]: DataType;

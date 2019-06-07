@@ -20,11 +20,11 @@ import { Vector } from './vector';
 import { Schema } from './schema';
 import { isIterable } from './util/compat';
 import { Chunked } from './vector/chunked';
+import { MapVector } from './vector/index';
 import { selectFieldArgs } from './util/args';
-import { StructVector } from './vector/struct';
-import { Struct } from './type';
+import { Map_ } from './type';
 import { ensureSameLengthData } from './util/recordbatch';
-export class RecordBatch extends StructVector {
+export class RecordBatch extends MapVector {
     constructor(...args) {
         let data;
         let schema = args[0];
@@ -35,7 +35,7 @@ export class RecordBatch extends StructVector {
         else {
             const fields = schema.fields;
             const [, length, childData] = args;
-            data = Data.Struct(new Struct(fields), 0, length, 0, null, childData);
+            data = Data.Map(new Map_(fields), 0, length, 0, null, childData);
         }
         super(data, children);
         this._schema = schema;
@@ -43,9 +43,9 @@ export class RecordBatch extends StructVector {
     /** @nocollapse */
     static from(options) {
         if (isIterable(options['values'])) {
-            return Table.fromStruct(StructVector.from(options));
+            return Table.from(options);
         }
-        return StructVector.from(options).then((struct) => Table.fromStruct(struct));
+        return Table.from(options);
     }
     /** @nocollapse */
     static new(...args) {

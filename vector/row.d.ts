@@ -16,8 +16,8 @@ export declare class Row<T extends {
     [Symbol.iterator](): IterableIterator<T[keyof T]["TValue"]>;
     get<K extends keyof T>(key: K): T[K]["TValue"];
     toJSON(): any;
-    inspect(): any;
-    toString(): any;
+    inspect(): string;
+    toString(): string;
 }
 /** @ignore */
 export declare class RowProxyGenerator<T extends {

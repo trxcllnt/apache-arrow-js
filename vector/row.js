@@ -45,10 +45,10 @@ class Row {
     [Symbol.for('nodejs.util.inspect.custom')]() { return this.toString(); }
     toString() {
         return type_1.DataType.isStruct(this[exports.kParent].type) ?
-            [...this].map((x) => pretty_1.valueToString(x)).join(', ') :
-            this[exports.kParent].type.children.reduce((props, { name }) => {
-                return (props[name] = pretty_1.valueToString(this[name])) && props || props;
-            }, {});
+            `[ ${[...this].map((x) => pretty_1.valueToString(x)).join(', ')} ]` :
+            `{ ${this[exports.kParent].type.children.reduce((xs, { name }) => {
+                return [...xs, `"${name}": ${pretty_1.valueToString(this[name])}`];
+            }, []).join(', ')} }`;
     }
 }
 exports.Row = Row;
