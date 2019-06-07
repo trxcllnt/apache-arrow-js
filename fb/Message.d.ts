@@ -1,7 +1,7 @@
 import { flatbuffers } from 'flatbuffers';
-import * as NS16187549871986683199 from './Schema';
+import * as NS7624605610262437867 from './Schema';
 export declare namespace org.apache.arrow.flatbuf {
-    export import Schema = NS16187549871986683199.org.apache.arrow.flatbuf.Schema;
+    export import Schema = NS7624605610262437867.org.apache.arrow.flatbuf.Schema;
 }
 /**
  * ----------------------------------------------------------------------
@@ -13,7 +13,7 @@ export declare namespace org.apache.arrow.flatbuf {
  * which may include experimental metadata types. For maximum compatibility,
  * it is best to send data using RecordBatch
  *
- * @enum
+ * @enum {number}
  */
 export declare namespace org.apache.arrow.flatbuf {
     enum MessageHeader {
@@ -21,7 +21,8 @@ export declare namespace org.apache.arrow.flatbuf {
         Schema = 1,
         DictionaryBatch = 2,
         RecordBatch = 3,
-        Tensor = 4
+        Tensor = 4,
+        SparseTensor = 5
     }
 }
 /**
@@ -39,25 +40,19 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class FieldNode {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {FieldNode}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns FieldNode
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): FieldNode;
         /**
          * The number of value slots in the Arrow array at this level of a nested
          * tree
          *
-         * @returns {flatbuffers.Long}
+         * @returns flatbuffers.Long
          */
         length(): flatbuffers.Long;
         /**
@@ -65,14 +60,14 @@ export declare namespace org.apache.arrow.flatbuf {
          * to write their physical validity bitmap out as a materialized buffer,
          * instead setting the length of the bitmap buffer to 0.
          *
-         * @returns {flatbuffers.Long}
+         * @returns flatbuffers.Long
          */
         nullCount(): flatbuffers.Long;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Long} length
-         * @param {flatbuffers.Long} null_count
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Long length
+         * @param flatbuffers.Long null_count
+         * @returns flatbuffers.Offset
          */
         static createFieldNode(builder: flatbuffers.Builder, length: flatbuffers.Long, null_count: flatbuffers.Long): flatbuffers.Offset;
     }
@@ -86,43 +81,43 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class RecordBatch {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {RecordBatch}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns RecordBatch
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): RecordBatch;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {RecordBatch=} obj
-         * @returns {RecordBatch}
+         * @param flatbuffers.ByteBuffer bb
+         * @param RecordBatch= obj
+         * @returns RecordBatch
          */
         static getRootAsRecordBatch(bb: flatbuffers.ByteBuffer, obj?: RecordBatch): RecordBatch;
+        /**
+         * @param flatbuffers.ByteBuffer bb
+         * @param RecordBatch= obj
+         * @returns RecordBatch
+         */
+        static getSizePrefixedRootAsRecordBatch(bb: flatbuffers.ByteBuffer, obj?: RecordBatch): RecordBatch;
         /**
          * number of records / rows. The arrays in the batch should all have this
          * length
          *
-         * @returns {flatbuffers.Long}
+         * @returns flatbuffers.Long
          */
         length(): flatbuffers.Long;
         /**
          * Nodes correspond to the pre-ordered flattened logical schema
          *
-         * @param {number} index
-         * @param {org.apache.arrow.flatbuf.FieldNode=} obj
-         * @returns {org.apache.arrow.flatbuf.FieldNode}
+         * @param number index
+         * @param org.apache.arrow.flatbuf.FieldNode= obj
+         * @returns org.apache.arrow.flatbuf.FieldNode
          */
         nodes(index: number, obj?: org.apache.arrow.flatbuf.FieldNode): org.apache.arrow.flatbuf.FieldNode | null;
         /**
-         * @returns {number}
+         * @returns number
          */
         nodesLength(): number;
         /**
@@ -133,49 +128,50 @@ export declare namespace org.apache.arrow.flatbuf {
          * bitmap and 1 for the values. For struct arrays, there will only be a
          * single buffer for the validity (nulls) bitmap
          *
-         * @param {number} index
-         * @param {org.apache.arrow.flatbuf.Buffer=} obj
-         * @returns {org.apache.arrow.flatbuf.Buffer}
+         * @param number index
+         * @param org.apache.arrow.flatbuf.Buffer= obj
+         * @returns org.apache.arrow.flatbuf.Buffer
          */
-        buffers(index: number, obj?: NS16187549871986683199.org.apache.arrow.flatbuf.Buffer): NS16187549871986683199.org.apache.arrow.flatbuf.Buffer | null;
+        buffers(index: number, obj?: NS7624605610262437867.org.apache.arrow.flatbuf.Buffer): NS7624605610262437867.org.apache.arrow.flatbuf.Buffer | null;
         /**
-         * @returns {number}
+         * @returns number
          */
         buffersLength(): number;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startRecordBatch(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Long} length
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Long length
          */
         static addLength(builder: flatbuffers.Builder, length: flatbuffers.Long): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} nodesOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset nodesOffset
          */
         static addNodes(builder: flatbuffers.Builder, nodesOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} numElems
+         * @param flatbuffers.Builder builder
+         * @param number numElems
          */
         static startNodesVector(builder: flatbuffers.Builder, numElems: number): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} buffersOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset buffersOffset
          */
         static addBuffers(builder: flatbuffers.Builder, buffersOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} numElems
+         * @param flatbuffers.Builder builder
+         * @param number numElems
          */
         static startBuffersVector(builder: flatbuffers.Builder, numElems: number): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endRecordBatch(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createRecordBatch(builder: flatbuffers.Builder, length: flatbuffers.Long, nodesOffset: flatbuffers.Offset, buffersOffset: flatbuffers.Offset): flatbuffers.Offset;
     }
 }
 /**
@@ -190,66 +186,67 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class DictionaryBatch {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {DictionaryBatch}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns DictionaryBatch
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): DictionaryBatch;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {DictionaryBatch=} obj
-         * @returns {DictionaryBatch}
+         * @param flatbuffers.ByteBuffer bb
+         * @param DictionaryBatch= obj
+         * @returns DictionaryBatch
          */
         static getRootAsDictionaryBatch(bb: flatbuffers.ByteBuffer, obj?: DictionaryBatch): DictionaryBatch;
         /**
-         * @returns {flatbuffers.Long}
+         * @param flatbuffers.ByteBuffer bb
+         * @param DictionaryBatch= obj
+         * @returns DictionaryBatch
+         */
+        static getSizePrefixedRootAsDictionaryBatch(bb: flatbuffers.ByteBuffer, obj?: DictionaryBatch): DictionaryBatch;
+        /**
+         * @returns flatbuffers.Long
          */
         id(): flatbuffers.Long;
         /**
-         * @param {org.apache.arrow.flatbuf.RecordBatch=} obj
-         * @returns {org.apache.arrow.flatbuf.RecordBatch|null}
+         * @param org.apache.arrow.flatbuf.RecordBatch= obj
+         * @returns org.apache.arrow.flatbuf.RecordBatch|null
          */
         data(obj?: org.apache.arrow.flatbuf.RecordBatch): org.apache.arrow.flatbuf.RecordBatch | null;
         /**
          * If isDelta is true the values in the dictionary are to be appended to a
          * dictionary with the indicated id
          *
-         * @returns {boolean}
+         * @returns boolean
          */
         isDelta(): boolean;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startDictionaryBatch(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Long} id
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Long id
          */
         static addId(builder: flatbuffers.Builder, id: flatbuffers.Long): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} dataOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset dataOffset
          */
         static addData(builder: flatbuffers.Builder, dataOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {boolean} isDelta
+         * @param flatbuffers.Builder builder
+         * @param boolean isDelta
          */
         static addIsDelta(builder: flatbuffers.Builder, isDelta: boolean): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endDictionaryBatch(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createDictionaryBatch(builder: flatbuffers.Builder, id: flatbuffers.Long, dataOffset: flatbuffers.Offset, isDelta: boolean): flatbuffers.Offset;
     }
 }
 /**
@@ -257,76 +254,108 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Message {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Message}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Message
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Message;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Message=} obj
-         * @returns {Message}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Message= obj
+         * @returns Message
          */
         static getRootAsMessage(bb: flatbuffers.ByteBuffer, obj?: Message): Message;
         /**
-         * @returns {org.apache.arrow.flatbuf.MetadataVersion}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Message= obj
+         * @returns Message
          */
-        version(): NS16187549871986683199.org.apache.arrow.flatbuf.MetadataVersion;
+        static getSizePrefixedRootAsMessage(bb: flatbuffers.ByteBuffer, obj?: Message): Message;
         /**
-         * @returns {org.apache.arrow.flatbuf.MessageHeader}
+         * @returns org.apache.arrow.flatbuf.MetadataVersion
+         */
+        version(): NS7624605610262437867.org.apache.arrow.flatbuf.MetadataVersion;
+        /**
+         * @returns org.apache.arrow.flatbuf.MessageHeader
          */
         headerType(): org.apache.arrow.flatbuf.MessageHeader;
         /**
-         * @param {flatbuffers.Table} obj
-         * @returns {?flatbuffers.Table}
+         * @param flatbuffers.Table obj
+         * @returns ?flatbuffers.Table
          */
         header<T extends flatbuffers.Table>(obj: T): T | null;
         /**
-         * @returns {flatbuffers.Long}
+         * @returns flatbuffers.Long
          */
         bodyLength(): flatbuffers.Long;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param number index
+         * @param org.apache.arrow.flatbuf.KeyValue= obj
+         * @returns org.apache.arrow.flatbuf.KeyValue
+         */
+        customMetadata(index: number, obj?: NS7624605610262437867.org.apache.arrow.flatbuf.KeyValue): NS7624605610262437867.org.apache.arrow.flatbuf.KeyValue | null;
+        /**
+         * @returns number
+         */
+        customMetadataLength(): number;
+        /**
+         * @param flatbuffers.Builder builder
          */
         static startMessage(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {org.apache.arrow.flatbuf.MetadataVersion} version
+         * @param flatbuffers.Builder builder
+         * @param org.apache.arrow.flatbuf.MetadataVersion version
          */
-        static addVersion(builder: flatbuffers.Builder, version: NS16187549871986683199.org.apache.arrow.flatbuf.MetadataVersion): void;
+        static addVersion(builder: flatbuffers.Builder, version: NS7624605610262437867.org.apache.arrow.flatbuf.MetadataVersion): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {org.apache.arrow.flatbuf.MessageHeader} headerType
+         * @param flatbuffers.Builder builder
+         * @param org.apache.arrow.flatbuf.MessageHeader headerType
          */
         static addHeaderType(builder: flatbuffers.Builder, headerType: org.apache.arrow.flatbuf.MessageHeader): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} headerOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset headerOffset
          */
         static addHeader(builder: flatbuffers.Builder, headerOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Long} bodyLength
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Long bodyLength
          */
         static addBodyLength(builder: flatbuffers.Builder, bodyLength: flatbuffers.Long): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset customMetadataOffset
+         */
+        static addCustomMetadata(builder: flatbuffers.Builder, customMetadataOffset: flatbuffers.Offset): void;
+        /**
+         * @param flatbuffers.Builder builder
+         * @param Array.<flatbuffers.Offset> data
+         * @returns flatbuffers.Offset
+         */
+        static createCustomMetadataVector(builder: flatbuffers.Builder, data: flatbuffers.Offset[]): flatbuffers.Offset;
+        /**
+         * @param flatbuffers.Builder builder
+         * @param number numElems
+         */
+        static startCustomMetadataVector(builder: flatbuffers.Builder, numElems: number): void;
+        /**
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endMessage(builder: flatbuffers.Builder): flatbuffers.Offset;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} offset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset offset
          */
         static finishMessageBuffer(builder: flatbuffers.Builder, offset: flatbuffers.Offset): void;
+        /**
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset offset
+         */
+        static finishSizePrefixedMessageBuffer(builder: flatbuffers.Builder, offset: flatbuffers.Offset): void;
+        static createMessage(builder: flatbuffers.Builder, version: NS7624605610262437867.org.apache.arrow.flatbuf.MetadataVersion, headerType: org.apache.arrow.flatbuf.MessageHeader, headerOffset: flatbuffers.Offset, bodyLength: flatbuffers.Long, customMetadataOffset: flatbuffers.Offset): flatbuffers.Offset;
     }
 }

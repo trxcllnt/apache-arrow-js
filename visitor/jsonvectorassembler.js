@@ -20,8 +20,8 @@ const bn_1 = require("../util/bn");
 const column_1 = require("../column");
 const vector_1 = require("../vector");
 const visitor_1 = require("../visitor");
-const recordbatch_1 = require("../recordbatch");
 const enum_1 = require("../enum");
+const recordbatch_1 = require("../recordbatch");
 const enum_2 = require("../enum");
 const bit_1 = require("../util/bit");
 const args_1 = require("../util/args");
@@ -36,7 +36,7 @@ class JSONVectorAssembler extends visitor_1.Visitor {
         const { data, name, length } = column;
         const { offset, nullCount, nullBitmap } = data;
         const type = type_1.DataType.isDictionary(column.type) ? column.type.indices : column.type;
-        const buffers = Object.assign([], data.buffers, { [enum_1.VectorType.VALIDITY]: undefined });
+        const buffers = Object.assign([], data.buffers, { [enum_1.BufferType.VALIDITY]: undefined });
         return {
             'name': name,
             'count': length,

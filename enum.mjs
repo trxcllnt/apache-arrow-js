@@ -21,7 +21,6 @@ export var DateUnit = Schema_.org.apache.arrow.flatbuf.DateUnit;
 export var TimeUnit = Schema_.org.apache.arrow.flatbuf.TimeUnit;
 export var Precision = Schema_.org.apache.arrow.flatbuf.Precision;
 export var UnionMode = Schema_.org.apache.arrow.flatbuf.UnionMode;
-export var VectorType = Schema_.org.apache.arrow.flatbuf.VectorType;
 export var IntervalUnit = Schema_.org.apache.arrow.flatbuf.IntervalUnit;
 export var MessageHeader = Message_.org.apache.arrow.flatbuf.MessageHeader;
 export var MetadataVersion = Schema_.org.apache.arrow.flatbuf.MetadataVersion;
@@ -117,5 +116,24 @@ export var Type;
     Type[Type["IntervalDayTime"] = -25] = "IntervalDayTime";
     Type[Type["IntervalYearMonth"] = -26] = "IntervalYearMonth";
 })(Type || (Type = {}));
+export var BufferType;
+(function (BufferType) {
+    /**
+     * used in List type, Dense Union and variable length primitive types (String, Binary)
+     */
+    BufferType[BufferType["OFFSET"] = 0] = "OFFSET";
+    /**
+     * actual data, either wixed width primitive types in slots or variable width delimited by an OFFSET vector
+     */
+    BufferType[BufferType["DATA"] = 1] = "DATA";
+    /**
+     * Bit vector indicating if each value is null
+     */
+    BufferType[BufferType["VALIDITY"] = 2] = "VALIDITY";
+    /**
+     * Type vector used in Union type
+     */
+    BufferType[BufferType["TYPE"] = 3] = "TYPE";
+})(BufferType || (BufferType = {}));
 
 //# sourceMappingURL=enum.mjs.map

@@ -1,6 +1,6 @@
 import { flatbuffers } from 'flatbuffers';
 /**
- * @enum
+ * @enum {number}
  */
 export declare namespace org.apache.arrow.flatbuf {
     enum MetadataVersion {
@@ -23,7 +23,7 @@ export declare namespace org.apache.arrow.flatbuf {
     }
 }
 /**
- * @enum
+ * @enum {number}
  */
 export declare namespace org.apache.arrow.flatbuf {
     enum UnionMode {
@@ -32,7 +32,7 @@ export declare namespace org.apache.arrow.flatbuf {
     }
 }
 /**
- * @enum
+ * @enum {number}
  */
 export declare namespace org.apache.arrow.flatbuf {
     enum Precision {
@@ -42,7 +42,7 @@ export declare namespace org.apache.arrow.flatbuf {
     }
 }
 /**
- * @enum
+ * @enum {number}
  */
 export declare namespace org.apache.arrow.flatbuf {
     enum DateUnit {
@@ -51,7 +51,7 @@ export declare namespace org.apache.arrow.flatbuf {
     }
 }
 /**
- * @enum
+ * @enum {number}
  */
 export declare namespace org.apache.arrow.flatbuf {
     enum TimeUnit {
@@ -62,7 +62,7 @@ export declare namespace org.apache.arrow.flatbuf {
     }
 }
 /**
- * @enum
+ * @enum {number}
  */
 export declare namespace org.apache.arrow.flatbuf {
     enum IntervalUnit {
@@ -75,7 +75,7 @@ export declare namespace org.apache.arrow.flatbuf {
  * Top-level Type value, enabling extensible type-specific metadata. We can
  * add new logical types to Type without breaking backwards compatibility
  *
- * @enum
+ * @enum {number}
  */
 export declare namespace org.apache.arrow.flatbuf {
     enum Type {
@@ -96,40 +96,15 @@ export declare namespace org.apache.arrow.flatbuf {
         Union = 14,
         FixedSizeBinary = 15,
         FixedSizeList = 16,
-        Map = 17
-    }
-}
-/**
- * ----------------------------------------------------------------------
- * The possible types of a vector
- *
- * @enum
- */
-export declare namespace org.apache.arrow.flatbuf {
-    enum VectorType {
-        /**
-         * used in List type, Dense Union and variable length primitive types (String, Binary)
-         */
-        OFFSET = 0,
-        /**
-         * actual data, either wixed width primitive types in slots or variable width delimited by an OFFSET vector
-         */
-        DATA = 1,
-        /**
-         * Bit vector indicating if each value is null
-         */
-        VALIDITY = 2,
-        /**
-         * Type vector used in Union type
-         */
-        TYPE = 3
+        Map = 17,
+        Duration = 18
     }
 }
 /**
  * ----------------------------------------------------------------------
  * Endianness of the platform producing the data
  *
- * @enum
+ * @enum {number}
  */
 export declare namespace org.apache.arrow.flatbuf {
     enum Endianness {
@@ -144,35 +119,36 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Null {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Null}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Null
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Null;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Null=} obj
-         * @returns {Null}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Null= obj
+         * @returns Null
          */
         static getRootAsNull(bb: flatbuffers.ByteBuffer, obj?: Null): Null;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.ByteBuffer bb
+         * @param Null= obj
+         * @returns Null
+         */
+        static getSizePrefixedRootAsNull(bb: flatbuffers.ByteBuffer, obj?: Null): Null;
+        /**
+         * @param flatbuffers.Builder builder
          */
         static startNull(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endNull(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createNull(builder: flatbuffers.Builder): flatbuffers.Offset;
     }
 }
 /**
@@ -184,35 +160,36 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Struct_ {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Struct_}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Struct_
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Struct_;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Struct_=} obj
-         * @returns {Struct_}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Struct_= obj
+         * @returns Struct_
          */
         static getRootAsStruct_(bb: flatbuffers.ByteBuffer, obj?: Struct_): Struct_;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.ByteBuffer bb
+         * @param Struct_= obj
+         * @returns Struct_
+         */
+        static getSizePrefixedRootAsStruct_(bb: flatbuffers.ByteBuffer, obj?: Struct_): Struct_;
+        /**
+         * @param flatbuffers.Builder builder
          */
         static startStruct_(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endStruct_(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createStruct_(builder: flatbuffers.Builder): flatbuffers.Offset;
     }
 }
 /**
@@ -220,35 +197,36 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class List {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {List}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns List
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): List;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {List=} obj
-         * @returns {List}
+         * @param flatbuffers.ByteBuffer bb
+         * @param List= obj
+         * @returns List
          */
         static getRootAsList(bb: flatbuffers.ByteBuffer, obj?: List): List;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.ByteBuffer bb
+         * @param List= obj
+         * @returns List
+         */
+        static getSizePrefixedRootAsList(bb: flatbuffers.ByteBuffer, obj?: List): List;
+        /**
+         * @param flatbuffers.Builder builder
          */
         static startList(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endList(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createList(builder: flatbuffers.Builder): flatbuffers.Offset;
     }
 }
 /**
@@ -256,46 +234,47 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class FixedSizeList {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {FixedSizeList}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns FixedSizeList
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): FixedSizeList;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {FixedSizeList=} obj
-         * @returns {FixedSizeList}
+         * @param flatbuffers.ByteBuffer bb
+         * @param FixedSizeList= obj
+         * @returns FixedSizeList
          */
         static getRootAsFixedSizeList(bb: flatbuffers.ByteBuffer, obj?: FixedSizeList): FixedSizeList;
         /**
+         * @param flatbuffers.ByteBuffer bb
+         * @param FixedSizeList= obj
+         * @returns FixedSizeList
+         */
+        static getSizePrefixedRootAsFixedSizeList(bb: flatbuffers.ByteBuffer, obj?: FixedSizeList): FixedSizeList;
+        /**
          * Number of list items per value
          *
-         * @returns {number}
+         * @returns number
          */
         listSize(): number;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startFixedSizeList(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} listSize
+         * @param flatbuffers.Builder builder
+         * @param number listSize
          */
         static addListSize(builder: flatbuffers.Builder, listSize: number): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endFixedSizeList(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createFixedSizeList(builder: flatbuffers.Builder, listSize: number): flatbuffers.Offset;
     }
 }
 /**
@@ -328,46 +307,47 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Map {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Map}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Map
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Map;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Map=} obj
-         * @returns {Map}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Map= obj
+         * @returns Map
          */
         static getRootAsMap(bb: flatbuffers.ByteBuffer, obj?: Map): Map;
         /**
+         * @param flatbuffers.ByteBuffer bb
+         * @param Map= obj
+         * @returns Map
+         */
+        static getSizePrefixedRootAsMap(bb: flatbuffers.ByteBuffer, obj?: Map): Map;
+        /**
          * Set to true if the keys within each value are sorted
          *
-         * @returns {boolean}
+         * @returns boolean
          */
         keysSorted(): boolean;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startMap(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {boolean} keysSorted
+         * @param flatbuffers.Builder builder
+         * @param boolean keysSorted
          */
         static addKeysSorted(builder: flatbuffers.Builder, keysSorted: boolean): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endMap(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createMap(builder: flatbuffers.Builder, keysSorted: boolean): flatbuffers.Offset;
     }
 }
 /**
@@ -380,73 +360,74 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Union {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Union}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Union
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Union;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Union=} obj
-         * @returns {Union}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Union= obj
+         * @returns Union
          */
         static getRootAsUnion(bb: flatbuffers.ByteBuffer, obj?: Union): Union;
         /**
-         * @returns {org.apache.arrow.flatbuf.UnionMode}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Union= obj
+         * @returns Union
+         */
+        static getSizePrefixedRootAsUnion(bb: flatbuffers.ByteBuffer, obj?: Union): Union;
+        /**
+         * @returns org.apache.arrow.flatbuf.UnionMode
          */
         mode(): org.apache.arrow.flatbuf.UnionMode;
         /**
-         * @param {number} index
-         * @returns {number}
+         * @param number index
+         * @returns number
          */
         typeIds(index: number): number | null;
         /**
-         * @returns {number}
+         * @returns number
          */
         typeIdsLength(): number;
         /**
-         * @returns {Int32Array}
+         * @returns Int32Array
          */
         typeIdsArray(): Int32Array | null;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startUnion(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {org.apache.arrow.flatbuf.UnionMode} mode
+         * @param flatbuffers.Builder builder
+         * @param org.apache.arrow.flatbuf.UnionMode mode
          */
         static addMode(builder: flatbuffers.Builder, mode: org.apache.arrow.flatbuf.UnionMode): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} typeIdsOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset typeIdsOffset
          */
         static addTypeIds(builder: flatbuffers.Builder, typeIdsOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {Array.<number>} data
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @param Array.<number> data
+         * @returns flatbuffers.Offset
          */
         static createTypeIdsVector(builder: flatbuffers.Builder, data: number[] | Int32Array): flatbuffers.Offset;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} numElems
+         * @param flatbuffers.Builder builder
+         * @param number numElems
          */
         static startTypeIdsVector(builder: flatbuffers.Builder, numElems: number): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endUnion(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createUnion(builder: flatbuffers.Builder, mode: org.apache.arrow.flatbuf.UnionMode, typeIdsOffset: flatbuffers.Offset): flatbuffers.Offset;
     }
 }
 /**
@@ -454,53 +435,54 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Int {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Int}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Int
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Int;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Int=} obj
-         * @returns {Int}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Int= obj
+         * @returns Int
          */
         static getRootAsInt(bb: flatbuffers.ByteBuffer, obj?: Int): Int;
         /**
-         * @returns {number}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Int= obj
+         * @returns Int
+         */
+        static getSizePrefixedRootAsInt(bb: flatbuffers.ByteBuffer, obj?: Int): Int;
+        /**
+         * @returns number
          */
         bitWidth(): number;
         /**
-         * @returns {boolean}
+         * @returns boolean
          */
         isSigned(): boolean;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startInt(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} bitWidth
+         * @param flatbuffers.Builder builder
+         * @param number bitWidth
          */
         static addBitWidth(builder: flatbuffers.Builder, bitWidth: number): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {boolean} isSigned
+         * @param flatbuffers.Builder builder
+         * @param boolean isSigned
          */
         static addIsSigned(builder: flatbuffers.Builder, isSigned: boolean): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endInt(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createInt(builder: flatbuffers.Builder, bitWidth: number, isSigned: boolean): flatbuffers.Offset;
     }
 }
 /**
@@ -508,44 +490,45 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class FloatingPoint {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {FloatingPoint}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns FloatingPoint
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): FloatingPoint;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {FloatingPoint=} obj
-         * @returns {FloatingPoint}
+         * @param flatbuffers.ByteBuffer bb
+         * @param FloatingPoint= obj
+         * @returns FloatingPoint
          */
         static getRootAsFloatingPoint(bb: flatbuffers.ByteBuffer, obj?: FloatingPoint): FloatingPoint;
         /**
-         * @returns {org.apache.arrow.flatbuf.Precision}
+         * @param flatbuffers.ByteBuffer bb
+         * @param FloatingPoint= obj
+         * @returns FloatingPoint
+         */
+        static getSizePrefixedRootAsFloatingPoint(bb: flatbuffers.ByteBuffer, obj?: FloatingPoint): FloatingPoint;
+        /**
+         * @returns org.apache.arrow.flatbuf.Precision
          */
         precision(): org.apache.arrow.flatbuf.Precision;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startFloatingPoint(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {org.apache.arrow.flatbuf.Precision} precision
+         * @param flatbuffers.Builder builder
+         * @param org.apache.arrow.flatbuf.Precision precision
          */
         static addPrecision(builder: flatbuffers.Builder, precision: org.apache.arrow.flatbuf.Precision): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endFloatingPoint(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createFloatingPoint(builder: flatbuffers.Builder, precision: org.apache.arrow.flatbuf.Precision): flatbuffers.Offset;
     }
 }
 /**
@@ -555,35 +538,36 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Utf8 {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Utf8}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Utf8
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Utf8;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Utf8=} obj
-         * @returns {Utf8}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Utf8= obj
+         * @returns Utf8
          */
         static getRootAsUtf8(bb: flatbuffers.ByteBuffer, obj?: Utf8): Utf8;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.ByteBuffer bb
+         * @param Utf8= obj
+         * @returns Utf8
+         */
+        static getSizePrefixedRootAsUtf8(bb: flatbuffers.ByteBuffer, obj?: Utf8): Utf8;
+        /**
+         * @param flatbuffers.Builder builder
          */
         static startUtf8(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endUtf8(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createUtf8(builder: flatbuffers.Builder): flatbuffers.Offset;
     }
 }
 /**
@@ -591,35 +575,36 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Binary {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Binary}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Binary
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Binary;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Binary=} obj
-         * @returns {Binary}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Binary= obj
+         * @returns Binary
          */
         static getRootAsBinary(bb: flatbuffers.ByteBuffer, obj?: Binary): Binary;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.ByteBuffer bb
+         * @param Binary= obj
+         * @returns Binary
+         */
+        static getSizePrefixedRootAsBinary(bb: flatbuffers.ByteBuffer, obj?: Binary): Binary;
+        /**
+         * @param flatbuffers.Builder builder
          */
         static startBinary(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endBinary(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createBinary(builder: flatbuffers.Builder): flatbuffers.Offset;
     }
 }
 /**
@@ -627,46 +612,47 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class FixedSizeBinary {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {FixedSizeBinary}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns FixedSizeBinary
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): FixedSizeBinary;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {FixedSizeBinary=} obj
-         * @returns {FixedSizeBinary}
+         * @param flatbuffers.ByteBuffer bb
+         * @param FixedSizeBinary= obj
+         * @returns FixedSizeBinary
          */
         static getRootAsFixedSizeBinary(bb: flatbuffers.ByteBuffer, obj?: FixedSizeBinary): FixedSizeBinary;
         /**
+         * @param flatbuffers.ByteBuffer bb
+         * @param FixedSizeBinary= obj
+         * @returns FixedSizeBinary
+         */
+        static getSizePrefixedRootAsFixedSizeBinary(bb: flatbuffers.ByteBuffer, obj?: FixedSizeBinary): FixedSizeBinary;
+        /**
          * Number of bytes per value
          *
-         * @returns {number}
+         * @returns number
          */
         byteWidth(): number;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startFixedSizeBinary(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} byteWidth
+         * @param flatbuffers.Builder builder
+         * @param number byteWidth
          */
         static addByteWidth(builder: flatbuffers.Builder, byteWidth: number): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endFixedSizeBinary(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createFixedSizeBinary(builder: flatbuffers.Builder, byteWidth: number): flatbuffers.Offset;
     }
 }
 /**
@@ -674,35 +660,36 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Bool {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Bool}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Bool
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Bool;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Bool=} obj
-         * @returns {Bool}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Bool= obj
+         * @returns Bool
          */
         static getRootAsBool(bb: flatbuffers.ByteBuffer, obj?: Bool): Bool;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.ByteBuffer bb
+         * @param Bool= obj
+         * @returns Bool
+         */
+        static getSizePrefixedRootAsBool(bb: flatbuffers.ByteBuffer, obj?: Bool): Bool;
+        /**
+         * @param flatbuffers.Builder builder
          */
         static startBool(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endBool(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createBool(builder: flatbuffers.Builder): flatbuffers.Offset;
     }
 }
 /**
@@ -710,57 +697,58 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Decimal {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Decimal}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Decimal
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Decimal;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Decimal=} obj
-         * @returns {Decimal}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Decimal= obj
+         * @returns Decimal
          */
         static getRootAsDecimal(bb: flatbuffers.ByteBuffer, obj?: Decimal): Decimal;
         /**
+         * @param flatbuffers.ByteBuffer bb
+         * @param Decimal= obj
+         * @returns Decimal
+         */
+        static getSizePrefixedRootAsDecimal(bb: flatbuffers.ByteBuffer, obj?: Decimal): Decimal;
+        /**
          * Total number of decimal digits
          *
-         * @returns {number}
+         * @returns number
          */
         precision(): number;
         /**
          * Number of digits after the decimal point "."
          *
-         * @returns {number}
+         * @returns number
          */
         scale(): number;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startDecimal(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} precision
+         * @param flatbuffers.Builder builder
+         * @param number precision
          */
         static addPrecision(builder: flatbuffers.Builder, precision: number): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} scale
+         * @param flatbuffers.Builder builder
+         * @param number scale
          */
         static addScale(builder: flatbuffers.Builder, scale: number): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endDecimal(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createDecimal(builder: flatbuffers.Builder, precision: number, scale: number): flatbuffers.Offset;
     }
 }
 /**
@@ -775,44 +763,45 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Date {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Date}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Date
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Date;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Date=} obj
-         * @returns {Date}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Date= obj
+         * @returns Date
          */
         static getRootAsDate(bb: flatbuffers.ByteBuffer, obj?: Date): Date;
         /**
-         * @returns {org.apache.arrow.flatbuf.DateUnit}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Date= obj
+         * @returns Date
+         */
+        static getSizePrefixedRootAsDate(bb: flatbuffers.ByteBuffer, obj?: Date): Date;
+        /**
+         * @returns org.apache.arrow.flatbuf.DateUnit
          */
         unit(): org.apache.arrow.flatbuf.DateUnit;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startDate(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {org.apache.arrow.flatbuf.DateUnit} unit
+         * @param flatbuffers.Builder builder
+         * @param org.apache.arrow.flatbuf.DateUnit unit
          */
         static addUnit(builder: flatbuffers.Builder, unit: org.apache.arrow.flatbuf.DateUnit): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endDate(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createDate(builder: flatbuffers.Builder, unit: org.apache.arrow.flatbuf.DateUnit): flatbuffers.Offset;
     }
 }
 /**
@@ -824,53 +813,54 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Time {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Time}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Time
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Time;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Time=} obj
-         * @returns {Time}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Time= obj
+         * @returns Time
          */
         static getRootAsTime(bb: flatbuffers.ByteBuffer, obj?: Time): Time;
         /**
-         * @returns {org.apache.arrow.flatbuf.TimeUnit}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Time= obj
+         * @returns Time
+         */
+        static getSizePrefixedRootAsTime(bb: flatbuffers.ByteBuffer, obj?: Time): Time;
+        /**
+         * @returns org.apache.arrow.flatbuf.TimeUnit
          */
         unit(): org.apache.arrow.flatbuf.TimeUnit;
         /**
-         * @returns {number}
+         * @returns number
          */
         bitWidth(): number;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startTime(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {org.apache.arrow.flatbuf.TimeUnit} unit
+         * @param flatbuffers.Builder builder
+         * @param org.apache.arrow.flatbuf.TimeUnit unit
          */
         static addUnit(builder: flatbuffers.Builder, unit: org.apache.arrow.flatbuf.TimeUnit): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} bitWidth
+         * @param flatbuffers.Builder builder
+         * @param number bitWidth
          */
         static addBitWidth(builder: flatbuffers.Builder, bitWidth: number): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endTime(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createTime(builder: flatbuffers.Builder, unit: org.apache.arrow.flatbuf.TimeUnit, bitWidth: number): flatbuffers.Offset;
     }
 }
 /**
@@ -885,28 +875,28 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Timestamp {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Timestamp}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Timestamp
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Timestamp;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Timestamp=} obj
-         * @returns {Timestamp}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Timestamp= obj
+         * @returns Timestamp
          */
         static getRootAsTimestamp(bb: flatbuffers.ByteBuffer, obj?: Timestamp): Timestamp;
         /**
-         * @returns {org.apache.arrow.flatbuf.TimeUnit}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Timestamp= obj
+         * @returns Timestamp
+         */
+        static getSizePrefixedRootAsTimestamp(bb: flatbuffers.ByteBuffer, obj?: Timestamp): Timestamp;
+        /**
+         * @returns org.apache.arrow.flatbuf.TimeUnit
          */
         unit(): org.apache.arrow.flatbuf.TimeUnit;
         /**
@@ -931,30 +921,31 @@ export declare namespace org.apache.arrow.flatbuf {
          *   between time zones is a metadata-only operation and does not change the
          *   underlying values
          *
-         * @param {flatbuffers.Encoding=} optionalEncoding
-         * @returns {string|Uint8Array|null}
+         * @param flatbuffers.Encoding= optionalEncoding
+         * @returns string|Uint8Array|null
          */
         timezone(): string | null;
         timezone(optionalEncoding: flatbuffers.Encoding): string | Uint8Array | null;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startTimestamp(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {org.apache.arrow.flatbuf.TimeUnit} unit
+         * @param flatbuffers.Builder builder
+         * @param org.apache.arrow.flatbuf.TimeUnit unit
          */
         static addUnit(builder: flatbuffers.Builder, unit: org.apache.arrow.flatbuf.TimeUnit): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} timezoneOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset timezoneOffset
          */
         static addTimezone(builder: flatbuffers.Builder, timezoneOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endTimestamp(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createTimestamp(builder: flatbuffers.Builder, unit: org.apache.arrow.flatbuf.TimeUnit, timezoneOffset: flatbuffers.Offset): flatbuffers.Offset;
     }
 }
 /**
@@ -962,106 +953,91 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Interval {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Interval}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Interval
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Interval;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Interval=} obj
-         * @returns {Interval}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Interval= obj
+         * @returns Interval
          */
         static getRootAsInterval(bb: flatbuffers.ByteBuffer, obj?: Interval): Interval;
         /**
-         * @returns {org.apache.arrow.flatbuf.IntervalUnit}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Interval= obj
+         * @returns Interval
+         */
+        static getSizePrefixedRootAsInterval(bb: flatbuffers.ByteBuffer, obj?: Interval): Interval;
+        /**
+         * @returns org.apache.arrow.flatbuf.IntervalUnit
          */
         unit(): org.apache.arrow.flatbuf.IntervalUnit;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startInterval(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {org.apache.arrow.flatbuf.IntervalUnit} unit
+         * @param flatbuffers.Builder builder
+         * @param org.apache.arrow.flatbuf.IntervalUnit unit
          */
         static addUnit(builder: flatbuffers.Builder, unit: org.apache.arrow.flatbuf.IntervalUnit): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endInterval(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createInterval(builder: flatbuffers.Builder, unit: org.apache.arrow.flatbuf.IntervalUnit): flatbuffers.Offset;
     }
 }
 /**
- * ----------------------------------------------------------------------
- * represents the physical layout of a buffer
- * buffers have fixed width slots of a given type
- *
  * @constructor
  */
 export declare namespace org.apache.arrow.flatbuf {
-    class VectorLayout {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+    class Duration {
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {VectorLayout}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Duration
          */
-        __init(i: number, bb: flatbuffers.ByteBuffer): VectorLayout;
+        __init(i: number, bb: flatbuffers.ByteBuffer): Duration;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {VectorLayout=} obj
-         * @returns {VectorLayout}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Duration= obj
+         * @returns Duration
          */
-        static getRootAsVectorLayout(bb: flatbuffers.ByteBuffer, obj?: VectorLayout): VectorLayout;
+        static getRootAsDuration(bb: flatbuffers.ByteBuffer, obj?: Duration): Duration;
         /**
-         * the width of a slot in the buffer (typically 1, 8, 16, 32 or 64)
-         *
-         * @returns {number}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Duration= obj
+         * @returns Duration
          */
-        bitWidth(): number;
+        static getSizePrefixedRootAsDuration(bb: flatbuffers.ByteBuffer, obj?: Duration): Duration;
         /**
-         * the purpose of the vector
-         *
-         * @returns {org.apache.arrow.flatbuf.VectorType}
+         * @returns org.apache.arrow.flatbuf.TimeUnit
          */
-        type(): org.apache.arrow.flatbuf.VectorType;
+        unit(): org.apache.arrow.flatbuf.TimeUnit;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
-        static startVectorLayout(builder: flatbuffers.Builder): void;
+        static startDuration(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} bitWidth
+         * @param flatbuffers.Builder builder
+         * @param org.apache.arrow.flatbuf.TimeUnit unit
          */
-        static addBitWidth(builder: flatbuffers.Builder, bitWidth: number): void;
+        static addUnit(builder: flatbuffers.Builder, unit: org.apache.arrow.flatbuf.TimeUnit): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {org.apache.arrow.flatbuf.VectorType} type
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
-        static addType(builder: flatbuffers.Builder, type: org.apache.arrow.flatbuf.VectorType): void;
-        /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
-         */
-        static endVectorLayout(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static endDuration(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createDuration(builder: flatbuffers.Builder, unit: org.apache.arrow.flatbuf.TimeUnit): flatbuffers.Offset;
     }
 }
 /**
@@ -1073,57 +1049,58 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class KeyValue {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {KeyValue}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns KeyValue
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): KeyValue;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {KeyValue=} obj
-         * @returns {KeyValue}
+         * @param flatbuffers.ByteBuffer bb
+         * @param KeyValue= obj
+         * @returns KeyValue
          */
         static getRootAsKeyValue(bb: flatbuffers.ByteBuffer, obj?: KeyValue): KeyValue;
         /**
-         * @param {flatbuffers.Encoding=} optionalEncoding
-         * @returns {string|Uint8Array|null}
+         * @param flatbuffers.ByteBuffer bb
+         * @param KeyValue= obj
+         * @returns KeyValue
+         */
+        static getSizePrefixedRootAsKeyValue(bb: flatbuffers.ByteBuffer, obj?: KeyValue): KeyValue;
+        /**
+         * @param flatbuffers.Encoding= optionalEncoding
+         * @returns string|Uint8Array|null
          */
         key(): string | null;
         key(optionalEncoding: flatbuffers.Encoding): string | Uint8Array | null;
         /**
-         * @param {flatbuffers.Encoding=} optionalEncoding
-         * @returns {string|Uint8Array|null}
+         * @param flatbuffers.Encoding= optionalEncoding
+         * @returns string|Uint8Array|null
          */
         value(): string | null;
         value(optionalEncoding: flatbuffers.Encoding): string | Uint8Array | null;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startKeyValue(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} keyOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset keyOffset
          */
         static addKey(builder: flatbuffers.Builder, keyOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} valueOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset valueOffset
          */
         static addValue(builder: flatbuffers.Builder, valueOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endKeyValue(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createKeyValue(builder: flatbuffers.Builder, keyOffset: flatbuffers.Offset, valueOffset: flatbuffers.Offset): flatbuffers.Offset;
     }
 }
 /**
@@ -1134,40 +1111,40 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class DictionaryEncoding {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {DictionaryEncoding}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns DictionaryEncoding
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): DictionaryEncoding;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {DictionaryEncoding=} obj
-         * @returns {DictionaryEncoding}
+         * @param flatbuffers.ByteBuffer bb
+         * @param DictionaryEncoding= obj
+         * @returns DictionaryEncoding
          */
         static getRootAsDictionaryEncoding(bb: flatbuffers.ByteBuffer, obj?: DictionaryEncoding): DictionaryEncoding;
+        /**
+         * @param flatbuffers.ByteBuffer bb
+         * @param DictionaryEncoding= obj
+         * @returns DictionaryEncoding
+         */
+        static getSizePrefixedRootAsDictionaryEncoding(bb: flatbuffers.ByteBuffer, obj?: DictionaryEncoding): DictionaryEncoding;
         /**
          * The known dictionary id in the application where this data is used. In
          * the file or streaming formats, the dictionary ids are found in the
          * DictionaryBatch messages
          *
-         * @returns {flatbuffers.Long}
+         * @returns flatbuffers.Long
          */
         id(): flatbuffers.Long;
         /**
          * The dictionary indices are constrained to be positive integers. If this
          * field is null, the indices must be signed int32
          *
-         * @param {org.apache.arrow.flatbuf.Int=} obj
-         * @returns {org.apache.arrow.flatbuf.Int|null}
+         * @param org.apache.arrow.flatbuf.Int= obj
+         * @returns org.apache.arrow.flatbuf.Int|null
          */
         indexType(obj?: org.apache.arrow.flatbuf.Int): org.apache.arrow.flatbuf.Int | null;
         /**
@@ -1176,33 +1153,34 @@ export declare namespace org.apache.arrow.flatbuf {
          * is used to represent ordered categorical data, and we provide a way to
          * preserve that metadata here
          *
-         * @returns {boolean}
+         * @returns boolean
          */
         isOrdered(): boolean;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startDictionaryEncoding(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Long} id
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Long id
          */
         static addId(builder: flatbuffers.Builder, id: flatbuffers.Long): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} indexTypeOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset indexTypeOffset
          */
         static addIndexType(builder: flatbuffers.Builder, indexTypeOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {boolean} isOrdered
+         * @param flatbuffers.Builder builder
+         * @param boolean isOrdered
          */
         static addIsOrdered(builder: flatbuffers.Builder, isOrdered: boolean): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endDictionaryEncoding(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createDictionaryEncoding(builder: flatbuffers.Builder, id: flatbuffers.Long, indexTypeOffset: flatbuffers.Offset, isOrdered: boolean): flatbuffers.Offset;
     }
 }
 /**
@@ -1210,174 +1188,154 @@ export declare namespace org.apache.arrow.flatbuf {
  * A field represents a named column in a record / row batch or child of a
  * nested type.
  *
- * - children is only for nested Arrow arrays
- * - For primitive types, children will have length 0
- * - nullable should default to true in general
- *
  * @constructor
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Field {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Field}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Field
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Field;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Field=} obj
-         * @returns {Field}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Field= obj
+         * @returns Field
          */
         static getRootAsField(bb: flatbuffers.ByteBuffer, obj?: Field): Field;
         /**
-         * @param {flatbuffers.Encoding=} optionalEncoding
-         * @returns {string|Uint8Array|null}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Field= obj
+         * @returns Field
+         */
+        static getSizePrefixedRootAsField(bb: flatbuffers.ByteBuffer, obj?: Field): Field;
+        /**
+         * Name is not required, in i.e. a List
+         *
+         * @param flatbuffers.Encoding= optionalEncoding
+         * @returns string|Uint8Array|null
          */
         name(): string | null;
         name(optionalEncoding: flatbuffers.Encoding): string | Uint8Array | null;
         /**
-         * @returns {boolean}
+         * Whether or not this field can contain nulls. Should be true in general.
+         *
+         * @returns boolean
          */
         nullable(): boolean;
         /**
-         * @returns {org.apache.arrow.flatbuf.Type}
+         * @returns org.apache.arrow.flatbuf.Type
          */
         typeType(): org.apache.arrow.flatbuf.Type;
         /**
-         * @param {flatbuffers.Table} obj
-         * @returns {?flatbuffers.Table}
+         * This is the type of the decoded value if the field is dictionary encoded.
+         *
+         * @param flatbuffers.Table obj
+         * @returns ?flatbuffers.Table
          */
         type<T extends flatbuffers.Table>(obj: T): T | null;
         /**
-         * @param {org.apache.arrow.flatbuf.DictionaryEncoding=} obj
-         * @returns {org.apache.arrow.flatbuf.DictionaryEncoding|null}
+         * Present only if the field is dictionary encoded.
+         *
+         * @param org.apache.arrow.flatbuf.DictionaryEncoding= obj
+         * @returns org.apache.arrow.flatbuf.DictionaryEncoding|null
          */
         dictionary(obj?: org.apache.arrow.flatbuf.DictionaryEncoding): org.apache.arrow.flatbuf.DictionaryEncoding | null;
         /**
-         * @param {number} index
-         * @param {org.apache.arrow.flatbuf.Field=} obj
-         * @returns {org.apache.arrow.flatbuf.Field}
+         * children apply only to nested data types like Struct, List and Union. For
+         * primitive types children will have length 0.
+         *
+         * @param number index
+         * @param org.apache.arrow.flatbuf.Field= obj
+         * @returns org.apache.arrow.flatbuf.Field
          */
         children(index: number, obj?: org.apache.arrow.flatbuf.Field): org.apache.arrow.flatbuf.Field | null;
         /**
-         * @returns {number}
+         * @returns number
          */
         childrenLength(): number;
         /**
-         * layout of buffers produced for this type (as derived from the Type)
-         * does not include children
-         * each recordbatch will return instances of those Buffers.
+         * User-defined metadata
          *
-         * @param {number} index
-         * @param {org.apache.arrow.flatbuf.VectorLayout=} obj
-         * @returns {org.apache.arrow.flatbuf.VectorLayout}
-         */
-        layout(index: number, obj?: org.apache.arrow.flatbuf.VectorLayout): org.apache.arrow.flatbuf.VectorLayout | null;
-        /**
-         * @returns {number}
-         */
-        layoutLength(): number;
-        /**
-         * @param {number} index
-         * @param {org.apache.arrow.flatbuf.KeyValue=} obj
-         * @returns {org.apache.arrow.flatbuf.KeyValue}
+         * @param number index
+         * @param org.apache.arrow.flatbuf.KeyValue= obj
+         * @returns org.apache.arrow.flatbuf.KeyValue
          */
         customMetadata(index: number, obj?: org.apache.arrow.flatbuf.KeyValue): org.apache.arrow.flatbuf.KeyValue | null;
         /**
-         * @returns {number}
+         * @returns number
          */
         customMetadataLength(): number;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startField(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} nameOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset nameOffset
          */
         static addName(builder: flatbuffers.Builder, nameOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {boolean} nullable
+         * @param flatbuffers.Builder builder
+         * @param boolean nullable
          */
         static addNullable(builder: flatbuffers.Builder, nullable: boolean): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {org.apache.arrow.flatbuf.Type} typeType
+         * @param flatbuffers.Builder builder
+         * @param org.apache.arrow.flatbuf.Type typeType
          */
         static addTypeType(builder: flatbuffers.Builder, typeType: org.apache.arrow.flatbuf.Type): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} typeOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset typeOffset
          */
         static addType(builder: flatbuffers.Builder, typeOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} dictionaryOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset dictionaryOffset
          */
         static addDictionary(builder: flatbuffers.Builder, dictionaryOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} childrenOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset childrenOffset
          */
         static addChildren(builder: flatbuffers.Builder, childrenOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {Array.<flatbuffers.Offset>} data
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @param Array.<flatbuffers.Offset> data
+         * @returns flatbuffers.Offset
          */
         static createChildrenVector(builder: flatbuffers.Builder, data: flatbuffers.Offset[]): flatbuffers.Offset;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} numElems
+         * @param flatbuffers.Builder builder
+         * @param number numElems
          */
         static startChildrenVector(builder: flatbuffers.Builder, numElems: number): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} layoutOffset
-         */
-        static addLayout(builder: flatbuffers.Builder, layoutOffset: flatbuffers.Offset): void;
-        /**
-         * @param {flatbuffers.Builder} builder
-         * @param {Array.<flatbuffers.Offset>} data
-         * @returns {flatbuffers.Offset}
-         */
-        static createLayoutVector(builder: flatbuffers.Builder, data: flatbuffers.Offset[]): flatbuffers.Offset;
-        /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} numElems
-         */
-        static startLayoutVector(builder: flatbuffers.Builder, numElems: number): void;
-        /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} customMetadataOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset customMetadataOffset
          */
         static addCustomMetadata(builder: flatbuffers.Builder, customMetadataOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {Array.<flatbuffers.Offset>} data
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @param Array.<flatbuffers.Offset> data
+         * @returns flatbuffers.Offset
          */
         static createCustomMetadataVector(builder: flatbuffers.Builder, data: flatbuffers.Offset[]): flatbuffers.Offset;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} numElems
+         * @param flatbuffers.Builder builder
+         * @param number numElems
          */
         static startCustomMetadataVector(builder: flatbuffers.Builder, numElems: number): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endField(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createField(builder: flatbuffers.Builder, nameOffset: flatbuffers.Offset, nullable: boolean, typeType: org.apache.arrow.flatbuf.Type, typeOffset: flatbuffers.Offset, dictionaryOffset: flatbuffers.Offset, childrenOffset: flatbuffers.Offset, customMetadataOffset: flatbuffers.Offset): flatbuffers.Offset;
     }
 }
 /**
@@ -1388,39 +1346,33 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Buffer {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Buffer}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Buffer
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Buffer;
         /**
          * The relative offset into the shared memory page where the bytes for this
          * buffer starts
          *
-         * @returns {flatbuffers.Long}
+         * @returns flatbuffers.Long
          */
         offset(): flatbuffers.Long;
         /**
          * The absolute length (in bytes) of the memory buffer. The memory is found
          * from offset (inclusive) to offset + length (non-inclusive).
          *
-         * @returns {flatbuffers.Long}
+         * @returns flatbuffers.Long
          */
         length(): flatbuffers.Long;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Long} offset
-         * @param {flatbuffers.Long} length
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Long offset
+         * @param flatbuffers.Long length
+         * @returns flatbuffers.Offset
          */
         static createBuffer(builder: flatbuffers.Builder, offset: flatbuffers.Long, length: flatbuffers.Long): flatbuffers.Offset;
     }
@@ -1433,104 +1385,110 @@ export declare namespace org.apache.arrow.flatbuf {
  */
 export declare namespace org.apache.arrow.flatbuf {
     class Schema {
-        /**
-         * @type {flatbuffers.ByteBuffer}
-         */
-        bb: flatbuffers.ByteBuffer;
-        /**
-         * @type {number}
-         */
+        bb: flatbuffers.ByteBuffer | null;
         bb_pos: number;
         /**
-         * @param {number} i
-         * @param {flatbuffers.ByteBuffer} bb
-         * @returns {Schema}
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns Schema
          */
         __init(i: number, bb: flatbuffers.ByteBuffer): Schema;
         /**
-         * @param {flatbuffers.ByteBuffer} bb
-         * @param {Schema=} obj
-         * @returns {Schema}
+         * @param flatbuffers.ByteBuffer bb
+         * @param Schema= obj
+         * @returns Schema
          */
         static getRootAsSchema(bb: flatbuffers.ByteBuffer, obj?: Schema): Schema;
+        /**
+         * @param flatbuffers.ByteBuffer bb
+         * @param Schema= obj
+         * @returns Schema
+         */
+        static getSizePrefixedRootAsSchema(bb: flatbuffers.ByteBuffer, obj?: Schema): Schema;
         /**
          * endianness of the buffer
          * it is Little Endian by default
          * if endianness doesn't match the underlying system then the vectors need to be converted
          *
-         * @returns {org.apache.arrow.flatbuf.Endianness}
+         * @returns org.apache.arrow.flatbuf.Endianness
          */
         endianness(): org.apache.arrow.flatbuf.Endianness;
         /**
-         * @param {number} index
-         * @param {org.apache.arrow.flatbuf.Field=} obj
-         * @returns {org.apache.arrow.flatbuf.Field}
+         * @param number index
+         * @param org.apache.arrow.flatbuf.Field= obj
+         * @returns org.apache.arrow.flatbuf.Field
          */
         fields(index: number, obj?: org.apache.arrow.flatbuf.Field): org.apache.arrow.flatbuf.Field | null;
         /**
-         * @returns {number}
+         * @returns number
          */
         fieldsLength(): number;
         /**
-         * @param {number} index
-         * @param {org.apache.arrow.flatbuf.KeyValue=} obj
-         * @returns {org.apache.arrow.flatbuf.KeyValue}
+         * @param number index
+         * @param org.apache.arrow.flatbuf.KeyValue= obj
+         * @returns org.apache.arrow.flatbuf.KeyValue
          */
         customMetadata(index: number, obj?: org.apache.arrow.flatbuf.KeyValue): org.apache.arrow.flatbuf.KeyValue | null;
         /**
-         * @returns {number}
+         * @returns number
          */
         customMetadataLength(): number;
         /**
-         * @param {flatbuffers.Builder} builder
+         * @param flatbuffers.Builder builder
          */
         static startSchema(builder: flatbuffers.Builder): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {org.apache.arrow.flatbuf.Endianness} endianness
+         * @param flatbuffers.Builder builder
+         * @param org.apache.arrow.flatbuf.Endianness endianness
          */
         static addEndianness(builder: flatbuffers.Builder, endianness: org.apache.arrow.flatbuf.Endianness): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} fieldsOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset fieldsOffset
          */
         static addFields(builder: flatbuffers.Builder, fieldsOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {Array.<flatbuffers.Offset>} data
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @param Array.<flatbuffers.Offset> data
+         * @returns flatbuffers.Offset
          */
         static createFieldsVector(builder: flatbuffers.Builder, data: flatbuffers.Offset[]): flatbuffers.Offset;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} numElems
+         * @param flatbuffers.Builder builder
+         * @param number numElems
          */
         static startFieldsVector(builder: flatbuffers.Builder, numElems: number): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} customMetadataOffset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset customMetadataOffset
          */
         static addCustomMetadata(builder: flatbuffers.Builder, customMetadataOffset: flatbuffers.Offset): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {Array.<flatbuffers.Offset>} data
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @param Array.<flatbuffers.Offset> data
+         * @returns flatbuffers.Offset
          */
         static createCustomMetadataVector(builder: flatbuffers.Builder, data: flatbuffers.Offset[]): flatbuffers.Offset;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {number} numElems
+         * @param flatbuffers.Builder builder
+         * @param number numElems
          */
         static startCustomMetadataVector(builder: flatbuffers.Builder, numElems: number): void;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @returns {flatbuffers.Offset}
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
          */
         static endSchema(builder: flatbuffers.Builder): flatbuffers.Offset;
         /**
-         * @param {flatbuffers.Builder} builder
-         * @param {flatbuffers.Offset} offset
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset offset
          */
         static finishSchemaBuffer(builder: flatbuffers.Builder, offset: flatbuffers.Offset): void;
+        /**
+         * @param flatbuffers.Builder builder
+         * @param flatbuffers.Offset offset
+         */
+        static finishSizePrefixedSchemaBuffer(builder: flatbuffers.Builder, offset: flatbuffers.Offset): void;
+        static createSchema(builder: flatbuffers.Builder, endianness: org.apache.arrow.flatbuf.Endianness, fieldsOffset: flatbuffers.Offset, customMetadataOffset: flatbuffers.Offset): flatbuffers.Offset;
     }
 }

@@ -1,5 +1,5 @@
 /// <reference types="flatbuffers" />
-export { ArrowType, DateUnit, IntervalUnit, MessageHeader, MetadataVersion, Precision, TimeUnit, Type, UnionMode, VectorType } from './enum';
+export { ArrowType, DateUnit, IntervalUnit, MessageHeader, MetadataVersion, Precision, TimeUnit, Type, UnionMode, BufferType } from './enum';
 export { Data } from './data';
 export { DataType, Null, Bool, Int, Int8, Int16, Int32, Int64, Uint8, Uint16, Uint32, Uint64, Float, Float16, Float32, Float64, Utf8, Binary, FixedSizeBinary, Date_, DateDay, DateMillisecond, Timestamp, TimestampSecond, TimestampMillisecond, TimestampMicrosecond, TimestampNanosecond, Time, TimeSecond, TimeMillisecond, TimeMicrosecond, TimeNanosecond, Decimal, List, Struct, Union, DenseUnion, SparseUnion, Dictionary, Interval, IntervalDayTime, IntervalYearMonth, FixedSizeList, Map_, } from './type';
 export { Table } from './table';

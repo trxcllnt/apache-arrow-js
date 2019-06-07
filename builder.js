@@ -17,8 +17,8 @@
 // under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
 const vector_1 = require("./vector");
-const data_1 = require("./data");
 const enum_1 = require("./enum");
+const data_1 = require("./data");
 const valid_1 = require("./builder/valid");
 const buffer_1 = require("./builder/buffer");
 const type_1 = require("./type");
@@ -306,19 +306,19 @@ class Builder {
         const typeIds = this._typeIds;
         const { length, nullCount } = this;
         if (typeIds) { /* Unions */
-            buffers[enum_1.VectorType.TYPE] = typeIds.flush(length);
+            buffers[enum_1.BufferType.TYPE] = typeIds.flush(length);
             // DenseUnions
-            offsets && (buffers[enum_1.VectorType.OFFSET] = offsets.flush(length));
+            offsets && (buffers[enum_1.BufferType.OFFSET] = offsets.flush(length));
         }
         else if (offsets) { /* Variable-width primitives (Binary, Utf8) and Lists */
             // Binary, Utf8
-            values && (buffers[enum_1.VectorType.DATA] = values.flush(offsets.last()));
-            buffers[enum_1.VectorType.OFFSET] = offsets.flush(length);
+            values && (buffers[enum_1.BufferType.DATA] = values.flush(offsets.last()));
+            buffers[enum_1.BufferType.OFFSET] = offsets.flush(length);
         }
         else if (values) { /* Fixed-width primitives (Int, Float, Decimal, Time, Timestamp, and Interval) */
-            buffers[enum_1.VectorType.DATA] = values.flush(length);
+            buffers[enum_1.BufferType.DATA] = values.flush(length);
         }
-        nullCount > 0 && (buffers[enum_1.VectorType.VALIDITY] = this._nulls.flush(length));
+        nullCount > 0 && (buffers[enum_1.BufferType.VALIDITY] = this._nulls.flush(length));
         const data = data_1.Data.new(this.type, 0, length, nullCount, buffers, this.children.map((child) => child.flush()));
         this.clear();
         return data;

@@ -96,17 +96,17 @@ class Data {
             bitmap.set(bit_1.truncateBitmap(this.offset, length, this.nullBitmap), 0);
         }
         const buffers = this.buffers;
-        buffers[enum_1.VectorType.VALIDITY] = bitmap;
+        buffers[enum_1.BufferType.VALIDITY] = bitmap;
         return this.clone(this.type, 0, newLength, nullCount + (newLength - length), buffers);
     }
     _sliceBuffers(offset, length, stride, typeId) {
         let arr, { buffers } = this;
         // If typeIds exist, slice the typeIds buffer
-        (arr = buffers[enum_1.VectorType.TYPE]) && (buffers[enum_1.VectorType.TYPE] = arr.subarray(offset, offset + length));
+        (arr = buffers[enum_1.BufferType.TYPE]) && (buffers[enum_1.BufferType.TYPE] = arr.subarray(offset, offset + length));
         // If offsets exist, only slice the offsets buffer
-        (arr = buffers[enum_1.VectorType.OFFSET]) && (buffers[enum_1.VectorType.OFFSET] = arr.subarray(offset, offset + length + 1)) ||
+        (arr = buffers[enum_1.BufferType.OFFSET]) && (buffers[enum_1.BufferType.OFFSET] = arr.subarray(offset, offset + length + 1)) ||
             // Otherwise if no offsets, slice the data buffer. Don't slice the data vector for Booleans, since the offset goes by bits not bytes
-            (arr = buffers[enum_1.VectorType.DATA]) && (buffers[enum_1.VectorType.DATA] = typeId === 6 ? arr : arr.subarray(stride * offset, stride * (offset + length)));
+            (arr = buffers[enum_1.BufferType.DATA]) && (buffers[enum_1.BufferType.DATA] = typeId === 6 ? arr : arr.subarray(stride * offset, stride * (offset + length)));
         return buffers;
     }
     _sliceChildren(childData, offset, length) {
@@ -124,24 +124,24 @@ class Data {
             buffers = [];
         }
         switch (type.typeId) {
-            case enum_1.Type.Null: return Data.Null(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY]);
-            case enum_1.Type.Int: return Data.Int(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], buffers[enum_1.VectorType.DATA] || []);
-            case enum_1.Type.Dictionary: return Data.Dictionary(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], buffers[enum_1.VectorType.DATA] || []);
-            case enum_1.Type.Float: return Data.Float(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], buffers[enum_1.VectorType.DATA] || []);
-            case enum_1.Type.Bool: return Data.Bool(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], buffers[enum_1.VectorType.DATA] || []);
-            case enum_1.Type.Decimal: return Data.Decimal(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], buffers[enum_1.VectorType.DATA] || []);
-            case enum_1.Type.Date: return Data.Date(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], buffers[enum_1.VectorType.DATA] || []);
-            case enum_1.Type.Time: return Data.Time(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], buffers[enum_1.VectorType.DATA] || []);
-            case enum_1.Type.Timestamp: return Data.Timestamp(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], buffers[enum_1.VectorType.DATA] || []);
-            case enum_1.Type.Interval: return Data.Interval(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], buffers[enum_1.VectorType.DATA] || []);
-            case enum_1.Type.FixedSizeBinary: return Data.FixedSizeBinary(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], buffers[enum_1.VectorType.DATA] || []);
-            case enum_1.Type.Binary: return Data.Binary(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], buffers[enum_1.VectorType.OFFSET] || [], buffers[enum_1.VectorType.DATA] || []);
-            case enum_1.Type.Utf8: return Data.Utf8(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], buffers[enum_1.VectorType.OFFSET] || [], buffers[enum_1.VectorType.DATA] || []);
-            case enum_1.Type.List: return Data.List(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], buffers[enum_1.VectorType.OFFSET] || [], (childData || [])[0]);
-            case enum_1.Type.FixedSizeList: return Data.FixedSizeList(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], (childData || [])[0]);
-            case enum_1.Type.Struct: return Data.Struct(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], childData || []);
-            case enum_1.Type.Map: return Data.Map(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], childData || []);
-            case enum_1.Type.Union: return Data.Union(type, offset, length, nullCount || 0, buffers[enum_1.VectorType.VALIDITY], buffers[enum_1.VectorType.TYPE] || [], buffers[enum_1.VectorType.OFFSET] || childData, childData);
+            case enum_1.Type.Null: return Data.Null(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY]);
+            case enum_1.Type.Int: return Data.Int(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
+            case enum_1.Type.Dictionary: return Data.Dictionary(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
+            case enum_1.Type.Float: return Data.Float(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
+            case enum_1.Type.Bool: return Data.Bool(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
+            case enum_1.Type.Decimal: return Data.Decimal(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
+            case enum_1.Type.Date: return Data.Date(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
+            case enum_1.Type.Time: return Data.Time(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
+            case enum_1.Type.Timestamp: return Data.Timestamp(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
+            case enum_1.Type.Interval: return Data.Interval(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
+            case enum_1.Type.FixedSizeBinary: return Data.FixedSizeBinary(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
+            case enum_1.Type.Binary: return Data.Binary(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.OFFSET] || [], buffers[enum_1.BufferType.DATA] || []);
+            case enum_1.Type.Utf8: return Data.Utf8(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.OFFSET] || [], buffers[enum_1.BufferType.DATA] || []);
+            case enum_1.Type.List: return Data.List(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.OFFSET] || [], (childData || [])[0]);
+            case enum_1.Type.FixedSizeList: return Data.FixedSizeList(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], (childData || [])[0]);
+            case enum_1.Type.Struct: return Data.Struct(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], childData || []);
+            case enum_1.Type.Map: return Data.Map(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], childData || []);
+            case enum_1.Type.Union: return Data.Union(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.TYPE] || [], buffers[enum_1.BufferType.OFFSET] || childData, childData);
         }
         throw new Error(`Unrecognized typeId ${type.typeId}`);
     }
@@ -223,7 +223,7 @@ class Data {
         if (type.mode === enum_1.UnionMode.Sparse) {
             return new Data(type, offset, length, nullCount, buffers, valueOffsetsOrChildren);
         }
-        buffers[enum_1.VectorType.OFFSET] = buffer_1.toInt32Array(valueOffsetsOrChildren);
+        buffers[enum_1.BufferType.OFFSET] = buffer_1.toInt32Array(valueOffsetsOrChildren);
         return new Data(type, offset, length, nullCount, buffers, children);
     }
 }

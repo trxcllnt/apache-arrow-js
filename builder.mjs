@@ -15,8 +15,8 @@
 // specific language governing permissions and limitations
 // under the License.
 import { Vector } from './vector';
+import { BufferType } from './enum';
 import { Data } from './data';
-import { VectorType as BufferType } from './enum';
 import { createIsValidFunction } from './builder/valid';
 import { BitmapBufferBuilder, DataBufferBuilder, OffsetsBufferBuilder } from './builder/buffer';
 import { DataType, strideForType, } from './type';
