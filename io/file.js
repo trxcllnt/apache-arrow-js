@@ -66,8 +66,8 @@ class AsyncRandomAccessFile extends stream_1.AsyncByteStream {
         }
         else {
             this._pending = (async () => {
-                delete this._pending;
                 this.size = (await file.stat()).size;
+                delete this._pending;
             })();
         }
     }

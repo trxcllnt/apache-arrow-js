@@ -35,7 +35,7 @@ class Column extends chunked_1.Chunked {
                 [vector_1.Vector.new(data, ...rest)]);
         if (typeof field === 'string') {
             const type = chunks[0].data.type;
-            field = new schema_1.Field(field, type, chunks.some(({ nullCount }) => nullCount > 0));
+            field = new schema_1.Field(field, type, true);
         }
         else if (!field.nullable && chunks.some(({ nullCount }) => nullCount > 0)) {
             field = field.clone({ nullable: true });

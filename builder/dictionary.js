@@ -16,14 +16,16 @@
 // specific language governing permissions and limitations
 // under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
-const vector_1 = require("../vector");
+const type_1 = require("../type");
 const builder_1 = require("../builder");
 /** @ignore */
 class DictionaryBuilder extends builder_1.Builder {
     constructor({ 'type': type, 'nullValues': nulls, 'dictionaryHashFunction': hashFn }) {
-        super({ type });
-        this._codes = Object.create(null);
+        super({ type: new type_1.Dictionary(type.dictionary, type.indices, type.id, type.isOrdered) });
+        this._dictionary = null;
         this._nulls = null;
+        this._dictionariesOffset = 0;
+        this._keysToIndices = Object.create(null);
         this.indices = builder_1.Builder.new({ 'type': this.type.indices, 'nullValues': nulls });
         this.dictionary = builder_1.Builder.new({ 'type': this.type.dictionary, 'nullValues': null });
         if (typeof hashFn === 'function') {
@@ -33,9 +35,9 @@ class DictionaryBuilder extends builder_1.Builder {
     get values() { return this.indices.values; }
     get nullCount() { return this.indices.nullCount; }
     get nullBitmap() { return this.indices.nullBitmap; }
-    get byteLength() { return this.indices.byteLength; }
-    get reservedLength() { return this.indices.reservedLength; }
-    get reservedByteLength() { return this.indices.reservedByteLength; }
+    get byteLength() { return this.indices.byteLength + this.dictionary.byteLength; }
+    get reservedLength() { return this.indices.reservedLength + this.dictionary.reservedLength; }
+    get reservedByteLength() { return this.indices.reservedByteLength + this.dictionary.reservedByteLength; }
     isValid(value) { return this.indices.isValid(value); }
     setValid(index, valid) {
         const indices = this.indices;
@@ -44,38 +46,37 @@ class DictionaryBuilder extends builder_1.Builder {
         return valid;
     }
     setValue(index, value) {
-        let keysToCodesMap = this._codes;
+        let keysToIndices = this._keysToIndices;
         let key = this.valueToKey(value);
-        let idx = keysToCodesMap[key];
+        let idx = keysToIndices[key];
         if (idx === undefined) {
-            keysToCodesMap[key] = idx = this.dictionary.append(value).length - 1;
+            keysToIndices[key] = idx = this._dictionariesOffset + this.dictionary.append(value).length - 1;
         }
         return this.indices.setValue(index, idx);
     }
     flush() {
-        const chunk = this.indices.flush().clone(this.type);
+        const type = this.type;
+        const prev = this._dictionary;
+        const curr = this.dictionary.toVector();
+        const data = this.indices.flush().clone(type);
+        data.dictionary = prev ? prev.concat(curr) : curr;
+        this.finished || (this._dictionariesOffset += curr.length);
+        this._dictionary = data.dictionary;
         this.clear();
-        return chunk;
+        return data;
     }
     finish() {
-        this.type.dictionaryVector = vector_1.Vector.new(this.dictionary.finish().flush());
+        this.indices.finish();
+        this.dictionary.finish();
         return super.finish();
     }
     clear() {
         this.indices.clear();
+        this.dictionary.clear();
         return super.clear();
     }
     valueToKey(val) {
-        let str = typeof val === 'string' ? val : `${val}`;
-        let h1 = 0xdeadbeef ^ 0, h2 = 0x41c6ce57 ^ 0;
-        for (let i = -1, n = str.length, ch; ++i < n;) {
-            ch = str.charCodeAt(i);
-            h1 = Math.imul(h1 ^ ch, 2654435761);
-            h2 = Math.imul(h2 ^ ch, 1597334677);
-        }
-        h1 = Math.imul(h1 ^ h1 >>> 16, 2246822507) ^ Math.imul(h2 ^ h2 >>> 13, 3266489909);
-        h2 = Math.imul(h2 ^ h2 >>> 16, 2246822507) ^ Math.imul(h1 ^ h1 >>> 13, 3266489909);
-        return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+        return (typeof val === 'string' ? val : `${val}`);
     }
 }
 exports.DictionaryBuilder = DictionaryBuilder;

@@ -1,5 +1,4 @@
 import { Field } from './schema';
-import { Vector } from './vector';
 import { flatbuffers } from 'flatbuffers';
 import { TypedArrayConstructor } from './interfaces';
 import { VectorType as V, TypeToDataType } from './interfaces';
@@ -557,8 +556,7 @@ export declare class Dictionary<T extends DataType = any, TKey extends TKeys = T
     readonly indices: TKey;
     readonly dictionary: T;
     readonly isOrdered: boolean;
-    dictionaryVector: Vector<T>;
-    constructor(dictionary: T, indices: TKey, id?: Long | number | null, isOrdered?: boolean | null, dictionaryVector?: Vector<T>);
+    constructor(dictionary: T, indices: TKey, id?: Long | number | null, isOrdered?: boolean | null);
     readonly typeId: Type.Dictionary;
     readonly children: Field<any>[];
     readonly valueType: T;

@@ -25,13 +25,14 @@ import { UnionMode, DateUnit } from '../enum';
 import { toArrayBufferView } from '../util/buffer';
 /** @ignore */
 export class VectorLoader extends Visitor {
-    constructor(bytes, nodes, buffers) {
+    constructor(bytes, nodes, buffers, dictionaries) {
         super();
         this.nodesIndex = -1;
         this.buffersIndex = -1;
         this.bytes = bytes;
         this.nodes = nodes;
         this.buffers = buffers;
+        this.dictionaries = dictionaries;
     }
     visit(node) {
         return super.visit(node instanceof Field ? node.type : node);
@@ -52,7 +53,7 @@ export class VectorLoader extends Visitor {
     visitUnion(type) { return type.mode === UnionMode.Sparse ? this.visitSparseUnion(type) : this.visitDenseUnion(type); }
     visitDenseUnion(type, { length, nullCount } = this.nextFieldNode()) { return Data.Union(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.readTypeIds(type), this.readOffsets(type), this.visitMany(type.children)); }
     visitSparseUnion(type, { length, nullCount } = this.nextFieldNode()) { return Data.Union(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.readTypeIds(type), this.visitMany(type.children)); }
-    visitDictionary(type, { length, nullCount } = this.nextFieldNode()) { return Data.Dictionary(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.readData(type.indices)); }
+    visitDictionary(type, { length, nullCount } = this.nextFieldNode()) { return Data.Dictionary(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.readData(type.indices), this.readDictionary(type)); }
     visitInterval(type, { length, nullCount } = this.nextFieldNode()) { return Data.Interval(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.readData(type)); }
     visitFixedSizeList(type, { length, nullCount } = this.nextFieldNode()) { return Data.FixedSizeList(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.visit(type.children[0])); }
     visitMap(type, { length, nullCount } = this.nextFieldNode()) { return Data.Map(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.visitMany(type.children)); }
@@ -66,11 +67,14 @@ export class VectorLoader extends Visitor {
     readData(_type, { length, offset } = this.nextBufferRange()) {
         return this.bytes.subarray(offset, offset + length);
     }
+    readDictionary(type) {
+        return this.dictionaries.get(type.id);
+    }
 }
 /** @ignore */
 export class JSONVectorLoader extends VectorLoader {
-    constructor(sources, nodes, buffers) {
-        super(new Uint8Array(0), nodes, buffers);
+    constructor(sources, nodes, buffers, dictionaries) {
+        super(new Uint8Array(0), nodes, buffers, dictionaries);
         this.sources = sources;
     }
     readNullBitmap(_type, nullCount, { offset } = this.nextBufferRange()) {

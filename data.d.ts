@@ -28,6 +28,10 @@ export declare class Data<T extends DataType = DataType> {
     readonly offset: number;
     readonly stride: number;
     readonly childData: Data[];
+    /**
+     * The dictionary for this Vector, if any. Only used for Dictionary type.
+     */
+    dictionary?: Vector;
     readonly values: Buffers<T>[BufferType.DATA];
     readonly typeIds: Buffers<T>[BufferType.TYPE];
     readonly nullBitmap: Buffers<T>[BufferType.VALIDITY];
@@ -38,20 +42,20 @@ export declare class Data<T extends DataType = DataType> {
     readonly byteLength: number;
     protected _nullCount: number | kUnknownNullCount;
     readonly nullCount: number;
-    constructor(type: T, offset: number, length: number, nullCount?: number, buffers?: Partial<Buffers<T>> | Data<T>, childData?: (Data | Vector)[]);
+    constructor(type: T, offset: number, length: number, nullCount?: number, buffers?: Partial<Buffers<T>> | Data<T>, childData?: (Data | Vector)[], dictionary?: Vector);
     clone<R extends DataType>(type: R, offset?: number, length?: number, nullCount?: number, buffers?: Buffers<R>, childData?: (Data | Vector)[]): Data<R>;
     slice(offset: number, length: number): Data<T>;
     _changeLengthAndBackfillNullBitmap(newLength: number): Data<T>;
     protected _sliceBuffers(offset: number, length: number, stride: number, typeId: T['TType']): Buffers<T>;
     protected _sliceChildren(childData: Data[], offset: number, length: number): Data[];
     /** @nocollapse */
-    static new<T extends DataType>(type: T, offset: number, length: number, nullCount?: number, buffers?: Partial<Buffers<T>> | Data<T>, childData?: (Data | Vector)[]): Data<T>;
+    static new<T extends DataType>(type: T, offset: number, length: number, nullCount?: number, buffers?: Partial<Buffers<T>> | Data<T>, childData?: (Data | Vector)[], dictionary?: Vector): Data<T>;
     /** @nocollapse */
     static Null<T extends Null>(type: T, offset: number, length: number, nullCount: number, nullBitmap: NullBuffer, _data?: NullBuffer): Data<T>;
     /** @nocollapse */
     static Int<T extends Int>(type: T, offset: number, length: number, nullCount: number, nullBitmap: NullBuffer, data: DataBuffer<T>): Data<T>;
     /** @nocollapse */
-    static Dictionary<T extends Dictionary>(type: T, offset: number, length: number, nullCount: number, nullBitmap: NullBuffer, data: DataBuffer<T>): Data<T>;
+    static Dictionary<T extends Dictionary>(type: T, offset: number, length: number, nullCount: number, nullBitmap: NullBuffer, data: DataBuffer<T>, dictionary: Vector<T['dictionary']>): Data<T>;
     /** @nocollapse */
     static Float<T extends Float>(type: T, offset: number, length: number, nullCount: number, nullBitmap: NullBuffer, data: DataBuffer<T>): Data<T>;
     /** @nocollapse */

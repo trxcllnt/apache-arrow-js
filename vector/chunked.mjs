@@ -16,8 +16,8 @@
 // under the License.
 import { clampRange } from '../util/vector';
 import { DataType } from '../type';
-import { AbstractVector, Vector } from '../vector';
 import { selectChunkArgs } from '../util/args';
+import { AbstractVector, Vector } from '../vector';
 /** @ignore */
 export class Chunked extends AbstractVector {
     constructor(type, chunks = [], offsets = calculateOffsets(chunks)) {
@@ -73,7 +73,7 @@ export class Chunked extends AbstractVector {
     }
     get dictionary() {
         if (DataType.isDictionary(this._type)) {
-            return this._type.dictionaryVector;
+            return this._chunks[this._chunks.length - 1].data.dictionary;
         }
         return null;
     }

@@ -29,12 +29,12 @@ export class DictionaryVector extends BaseVector {
     static from(...args) {
         if (args.length === 3) {
             const [values, indices, keys] = args;
-            const type = new Dictionary(values.type, indices, null, null, values);
-            return Vector.new(Data.Dictionary(type, 0, keys.length, 0, null, keys));
+            const type = new Dictionary(values.type, indices, null, null);
+            return Vector.new(Data.Dictionary(type, 0, keys.length, 0, null, keys, values));
         }
         return vectorFromValuesWithType(() => args[0].type, args[0]);
     }
-    get dictionary() { return this.data.type.dictionaryVector; }
+    get dictionary() { return this.data.dictionary; }
     reverseLookup(value) { return this.dictionary.indexOf(value); }
     getKey(idx) { return this.indices.get(idx); }
     getValue(key) { return this.dictionary.get(key); }

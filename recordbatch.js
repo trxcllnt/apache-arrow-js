@@ -19,6 +19,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const data_1 = require("./data");
 const table_1 = require("./table");
 const vector_1 = require("./vector");
+const visitor_1 = require("./visitor");
 const schema_1 = require("./schema");
 const compat_1 = require("./util/compat");
 const chunked_1 = require("./vector/chunked");
@@ -64,6 +65,9 @@ class RecordBatch extends index_1.MapVector {
     }
     get schema() { return this._schema; }
     get numCols() { return this._schema.fields.length; }
+    get dictionaries() {
+        return this._dictionaries || (this._dictionaries = DictionaryCollector.collect(this));
+    }
     select(...columnNames) {
         const nameToIndex = this._schema.fields.reduce((m, f, i) => m.set(f.name, i), new Map());
         return this.selectAt(...columnNames.map((columnName) => nameToIndex.get(columnName)).filter((x) => x > -1));
@@ -90,5 +94,31 @@ class _InternalEmptyPlaceholderRecordBatch extends RecordBatch {
     }
 }
 exports._InternalEmptyPlaceholderRecordBatch = _InternalEmptyPlaceholderRecordBatch;
+/** @ignore */
+class DictionaryCollector extends visitor_1.Visitor {
+    constructor() {
+        super(...arguments);
+        this.dictionaries = new Map();
+    }
+    static collect(batch) {
+        return new DictionaryCollector().visit(batch.data, new type_1.Map_(batch.schema.fields)).dictionaries;
+    }
+    visit(data, type) {
+        if (type_1.DataType.isDictionary(type)) {
+            return this.visitDictionary(data, type);
+        }
+        else {
+            data.childData.forEach((child, i) => this.visit(child, type.children[i].type));
+        }
+        return this;
+    }
+    visitDictionary(data, type) {
+        const dictionary = data.dictionary;
+        if (dictionary && dictionary.length > 0) {
+            this.dictionaries.set(type.id, dictionary);
+        }
+        return this;
+    }
+}
 
 //# sourceMappingURL=recordbatch.js.map

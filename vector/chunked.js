@@ -18,8 +18,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const vector_1 = require("../util/vector");
 const type_1 = require("../type");
-const vector_2 = require("../vector");
 const args_1 = require("../util/args");
+const vector_2 = require("../vector");
 /** @ignore */
 class Chunked extends vector_2.AbstractVector {
     constructor(type, chunks = [], offsets = calculateOffsets(chunks)) {
@@ -75,7 +75,7 @@ class Chunked extends vector_2.AbstractVector {
     }
     get dictionary() {
         if (type_1.DataType.isDictionary(this._type)) {
-            return this._type.dictionaryVector;
+            return this._chunks[this._chunks.length - 1].data.dictionary;
         }
         return null;
     }

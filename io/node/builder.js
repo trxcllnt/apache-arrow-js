@@ -17,7 +17,6 @@
 // under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
 const stream_1 = require("stream");
-const type_1 = require("../../type");
 const index_1 = require("../../builder/index");
 /** @ignore */
 function builderThroughNodeStream(options) {
@@ -27,7 +26,6 @@ exports.builderThroughNodeStream = builderThroughNodeStream;
 /** @ignore */
 class BuilderDuplex extends stream_1.Duplex {
     constructor(builder, options) {
-        const isDictionary = type_1.DataType.isDictionary(builder.type);
         const { queueingStrategy = 'count', autoDestroy = true } = options;
         const { highWaterMark = queueingStrategy !== 'bytes' ? 1000 : 2 ** 14 } = options;
         super({ autoDestroy, highWaterMark: 1, allowHalfOpen: true, writableObjectMode: true, readableObjectMode: true });
@@ -36,19 +34,6 @@ class BuilderDuplex extends stream_1.Duplex {
         this._builder = builder;
         this._desiredSize = highWaterMark;
         this._getSize = queueingStrategy !== 'bytes' ? builderLength : builderByteLength;
-        if (isDictionary) {
-            let chunks = [];
-            this.push = (chunk, _) => {
-                if (chunk !== null) {
-                    chunks.push(chunk);
-                    return true;
-                }
-                const chunks_ = chunks;
-                chunks = [];
-                chunks_.forEach((x) => super.push(x));
-                return super.push(null) && false;
-            };
-        }
     }
     _read(size) {
         this._maybeFlush(this._builder, this._desiredSize = size);

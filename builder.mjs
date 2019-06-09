@@ -19,7 +19,7 @@ import { BufferType } from './enum';
 import { Data } from './data';
 import { createIsValidFunction } from './builder/valid';
 import { BitmapBufferBuilder, DataBufferBuilder, OffsetsBufferBuilder } from './builder/buffer';
-import { DataType, strideForType, } from './type';
+import { strideForType, } from './type';
 /**
  * An abstract base class for types that construct Arrow Vectors from arbitrary JavaScript values.
  *
@@ -148,17 +148,7 @@ export class Builder {
      * @nocollapse
      */
     static throughIterable(options) {
-        const build = throughIterable(options);
-        if (!DataType.isDictionary(options.type)) {
-            return build;
-        }
-        return function* (source) {
-            const chunks = [];
-            for (const chunk of build(source)) {
-                chunks.push(chunk);
-            }
-            yield* chunks;
-        };
+        return throughIterable(options);
     }
     /**
      * Transform an `AsyncIterable` of arbitrary JavaScript values into a
@@ -186,17 +176,7 @@ export class Builder {
      * @nocollapse
      */
     static throughAsyncIterable(options) {
-        const build = throughAsyncIterable(options);
-        if (!DataType.isDictionary(options.type)) {
-            return build;
-        }
-        return async function* (source) {
-            const chunks = [];
-            for await (const chunk of build(source)) {
-                chunks.push(chunk);
-            }
-            yield* chunks;
-        };
+        return throughAsyncIterable(options);
     }
     /**
      * Flush the `Builder` and return a `Vector<T>`.

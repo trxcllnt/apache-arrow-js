@@ -1,6 +1,6 @@
 import { Data } from './data';
 import { Vector } from './vector';
-import { DataType, Dictionary } from './type';
+import { DataType } from './type';
 declare type VectorMap = {
     [key: string]: Vector;
 };
@@ -34,8 +34,7 @@ export declare class Schema<T extends {
     readonly fields: Field<T[keyof T]>[];
     readonly metadata: Map<string, string>;
     readonly dictionaries: Map<number, DataType>;
-    readonly dictionaryFields: Map<number, Field<Dictionary>[]>;
-    constructor(fields?: Field[], metadata?: Map<string, string> | null, dictionaries?: Map<number, DataType> | null, dictionaryFields?: Map<number, Field<Dictionary>[]> | null);
+    constructor(fields?: Field[], metadata?: Map<string, string> | null, dictionaries?: Map<number, DataType> | null);
     readonly [Symbol.toStringTag]: string;
     toString(): string;
     compareTo(other?: Schema | null): other is Schema<T>;

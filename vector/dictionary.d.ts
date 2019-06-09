@@ -6,10 +6,10 @@ import { VectorBuilderOptions } from './index';
 import { VectorBuilderOptionsAsync } from './index';
 import { DataType, Dictionary, TKeys } from '../type';
 /** @ignore */
-declare type DictionaryFromArgs<T extends DataType = any, TKey extends TKeys = TKeys> = [Vector<T>, TKey, ArrayLike<number> | TKey['TArray']];
+declare type FromArgs<T extends DataType = any, TKey extends TKeys = TKeys> = [Vector<T>, TKey, ArrayLike<number> | TKey['TArray']];
 /** @ignore */
 export declare class DictionaryVector<T extends DataType = any, TKey extends TKeys = TKeys> extends BaseVector<Dictionary<T, TKey>> {
-    static from<T extends DataType = any, TKey extends TKeys = TKeys>(...args: DictionaryFromArgs<T, TKey>): V<Dictionary<T, TKey>>;
+    static from<T extends DataType = any, TKey extends TKeys = TKeys>(...args: FromArgs<T, TKey>): V<Dictionary<T, TKey>>;
     static from<T extends DataType = any, TKey extends TKeys = TKeys>(input: VectorBuilderOptions<Dictionary<T, TKey>>): Vector<Dictionary<T, TKey>>;
     static from<T extends DataType = any, TKey extends TKeys = TKeys>(input: VectorBuilderOptionsAsync<Dictionary<T, TKey>>): Promise<Vector<Dictionary<T, TKey>>>;
     constructor(data: Data<Dictionary<T, TKey>>);

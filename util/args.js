@@ -138,16 +138,16 @@ function _selectFieldArgs(vals, ret) {
     while (++idx < len) {
         val = vals[idx];
         if (val instanceof column_1.Column && (values[++valueIndex] = val)) {
-            fields[++fieldIndex] = val.field.clone(keys[idx], val.type, val.nullCount > 0);
+            fields[++fieldIndex] = val.field.clone(keys[idx], val.type, true);
         }
         else {
             ({ [idx]: field = idx } = keys);
             if (val instanceof type_1.DataType && (values[++valueIndex] = val)) {
-                fields[++fieldIndex] = schema_1.Field.new(field, val);
+                fields[++fieldIndex] = schema_1.Field.new(field, val, true);
             }
             else if (val && val.type && (values[++valueIndex] = val)) {
                 val instanceof data_1.Data && (values[valueIndex] = val = vector_1.Vector.new(val));
-                fields[++fieldIndex] = schema_1.Field.new(field, val.type, val.nullCount > 0);
+                fields[++fieldIndex] = schema_1.Field.new(field, val.type, true);
             }
         }
     }

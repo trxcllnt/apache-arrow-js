@@ -439,12 +439,11 @@ Map_[Symbol.toStringTag] = ((proto) => {
 const getId = ((atomicDictionaryId) => () => ++atomicDictionaryId)(-1);
 /** @ignore */
 export class Dictionary extends DataType {
-    constructor(dictionary, indices, id, isOrdered, dictionaryVector) {
+    constructor(dictionary, indices, id, isOrdered) {
         super();
         this.indices = indices;
         this.dictionary = dictionary;
         this.isOrdered = isOrdered || false;
-        this.dictionaryVector = dictionaryVector;
         this.id = id == null ? getId() : typeof id === 'number' ? id : id.low;
     }
     get typeId() { return Type.Dictionary; }
@@ -458,7 +457,6 @@ Dictionary[Symbol.toStringTag] = ((proto) => {
     proto.indices = null;
     proto.isOrdered = null;
     proto.dictionary = null;
-    proto.dictionaryVector = null;
     return proto[Symbol.toStringTag] = 'Dictionary';
 })(Dictionary.prototype);
 /** @ignore */

@@ -38,10 +38,12 @@ export declare class RecordBatch<T extends {
         [key: string]: DataType;
     } = any>(children: ChildData<T>, fields?: Fields<T>): RecordBatch<T>;
     protected _schema: Schema;
+    protected _dictionaries?: Map<number, Vector>;
     constructor(schema: Schema<T>, length: number, children: (Data | Vector)[]);
     constructor(schema: Schema<T>, data: Data<Map_<T>>, children?: Vector[]);
     readonly schema: Schema<any>;
     readonly numCols: number;
+    readonly dictionaries: Map<number, Vector<any>>;
     select<K extends keyof T = any>(...columnNames: K[]): RecordBatch<{
         [key: string]: any;
     }>;

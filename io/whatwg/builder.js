@@ -16,7 +16,6 @@
 // specific language governing permissions and limitations
 // under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
-const type_1 = require("../../type");
 const index_1 = require("../../builder/index");
 /** @ignore */
 function builderThroughDOMStream(options) {
@@ -52,22 +51,6 @@ class BuilderTransform {
             'highWaterMark': writableHighWaterMark,
             'size': (value) => this._writeValueAndReturnChunkSize(value),
         });
-        if (type_1.DataType.isDictionary(builderOptions.type)) {
-            let chunks = [];
-            this._enqueue = (controller, chunk) => {
-                this._bufferedSize = 0;
-                if (chunk !== null) {
-                    chunks.push(chunk);
-                }
-                else {
-                    const chunks_ = chunks;
-                    chunks = [];
-                    chunks_.forEach((x) => controller.enqueue(x));
-                    controller.close();
-                    this._controller = null;
-                }
-            };
-        }
     }
     _writeValueAndReturnChunkSize(value) {
         const bufferedSize = this._bufferedSize;

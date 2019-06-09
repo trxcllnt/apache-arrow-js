@@ -17,11 +17,10 @@
 import { Table } from '../table';
 import { MAGIC } from './message';
 import { Column } from '../column';
+import { DataType } from '../type';
 import { Field } from '../schema';
-import { Chunked } from '../vector/chunked';
 import { Message } from './metadata/message';
 import * as metadata from './metadata/message';
-import { DataType } from '../type';
 import { FileBlock, Footer } from './metadata/file';
 import { MessageHeader, MetadataVersion } from '../enum';
 import { AsyncByteQueue } from '../io/stream';
@@ -42,6 +41,7 @@ export class RecordBatchWriter extends ReadableInterop {
         this._schema = null;
         this._dictionaryBlocks = [];
         this._recordBatchBlocks = [];
+        this._dictionaryDeltaOffsets = new Map();
         this._autoDestroy = options && (typeof options.autoDestroy === 'boolean') ? options.autoDestroy : true;
     }
     /** @nocollapse */
@@ -100,11 +100,12 @@ export class RecordBatchWriter extends ReadableInterop {
             }
         }
         if (this._started && this._schema) {
-            this._writeFooter();
+            this._writeFooter(this._schema);
         }
         this._started = false;
         this._dictionaryBlocks = [];
         this._recordBatchBlocks = [];
+        this._dictionaryDeltaOffsets = new Map();
         if (!schema || !(schema.compareTo(this._schema))) {
             if (schema === null) {
                 this._position = 0;
@@ -182,11 +183,10 @@ export class RecordBatchWriter extends ReadableInterop {
         return this;
     }
     _writeSchema(schema) {
-        return this
-            ._writeMessage(Message.from(schema))
-            ._writeDictionaries(schema.dictionaryFields);
+        return this._writeMessage(Message.from(schema));
     }
-    _writeFooter() {
+    // @ts-ignore
+    _writeFooter(schema) {
         return this._writePadding(4); // eos bytes
     }
     _writeMagic() {
@@ -195,15 +195,17 @@ export class RecordBatchWriter extends ReadableInterop {
     _writePadding(nBytes) {
         return nBytes > 0 ? this._write(new Uint8Array(nBytes)) : this;
     }
-    _writeRecordBatch(records) {
-        const { byteLength, nodes, bufferRegions, buffers } = VectorAssembler.assemble(records);
-        const recordBatch = new metadata.RecordBatch(records.length, nodes, bufferRegions);
+    _writeRecordBatch(batch) {
+        const { byteLength, nodes, bufferRegions, buffers } = VectorAssembler.assemble(batch);
+        const recordBatch = new metadata.RecordBatch(batch.length, nodes, bufferRegions);
         const message = Message.from(recordBatch, byteLength);
         return this
+            ._writeDictionaries(batch)
             ._writeMessage(message)
             ._writeBodyBuffers(buffers);
     }
     _writeDictionaryBatch(dictionary, id, isDelta = false) {
+        this._dictionaryDeltaOffsets.set(id, dictionary.length + (this._dictionaryDeltaOffsets.get(id) || 0));
         const { byteLength, nodes, bufferRegions, buffers } = VectorAssembler.assemble(dictionary);
         const recordBatch = new metadata.RecordBatch(dictionary.length, nodes, bufferRegions);
         const dictionaryBatch = new metadata.DictionaryBatch(recordBatch, id, isDelta);
@@ -225,16 +227,14 @@ export class RecordBatchWriter extends ReadableInterop {
         }
         return this;
     }
-    _writeDictionaries(dictionaryFields) {
-        for (const [id, fields] of dictionaryFields) {
-            const vector = fields[0].type.dictionaryVector;
-            if (!(vector instanceof Chunked)) {
-                this._writeDictionaryBatch(vector, id, false);
-            }
-            else {
-                const chunks = vector.chunks;
-                for (let i = -1, n = chunks.length; ++i < n;) {
-                    this._writeDictionaryBatch(chunks[i], id, i > 0);
+    _writeDictionaries(batch) {
+        for (let [id, dictionary] of batch.dictionaries) {
+            let offset = this._dictionaryDeltaOffsets.get(id) || 0;
+            if (offset === 0 || (dictionary = dictionary.slice(offset)).length > 0) {
+                const chunks = 'chunks' in dictionary ? dictionary.chunks : [dictionary];
+                for (const chunk of chunks) {
+                    this._writeDictionaryBatch(chunk, id, offset > 0);
+                    offset += chunk.length;
                 }
             }
         }
@@ -272,13 +272,12 @@ export class RecordBatchFileWriter extends RecordBatchWriter {
         }
         return writeAll(writer, input);
     }
+    // @ts-ignore
     _writeSchema(schema) {
-        return this
-            ._writeMagic()._writePadding(2)
-            ._writeDictionaries(schema.dictionaryFields);
+        return this._writeMagic()._writePadding(2);
     }
-    _writeFooter() {
-        const buffer = Footer.encode(new Footer(this._schema, MetadataVersion.V4, this._recordBatchBlocks, this._dictionaryBlocks));
+    _writeFooter(schema) {
+        const buffer = Footer.encode(new Footer(schema, MetadataVersion.V4, this._recordBatchBlocks, this._dictionaryBlocks));
         return this
             ._write(buffer) // Write the flatbuffer
             ._write(Int32Array.of(buffer.byteLength)) // then the footer size suffix
@@ -290,6 +289,8 @@ export class RecordBatchJSONWriter extends RecordBatchWriter {
     constructor() {
         super();
         this._autoDestroy = true;
+        this._recordBatches = [];
+        this._dictionaries = [];
     }
     /** @nocollapse */
     static writeAll(input) {
@@ -297,34 +298,47 @@ export class RecordBatchJSONWriter extends RecordBatchWriter {
     }
     _writeMessage() { return this; }
     _writeSchema(schema) {
-        return this._write(`{\n  "schema": ${JSON.stringify({ fields: schema.fields.map(fieldToJSON) }, null, 2)}`)._writeDictionaries(schema.dictionaryFields);
+        return this._write(`{\n  "schema": ${JSON.stringify({ fields: schema.fields.map(fieldToJSON) }, null, 2)}`);
     }
-    _writeDictionaries(dictionaryFields) {
-        this._write(`,\n  "dictionaries": [\n`);
-        super._writeDictionaries(dictionaryFields);
-        return this._write(`\n  ]`);
+    _writeDictionaries(batch) {
+        if (batch.dictionaries.size > 0) {
+            this._dictionaries.push(batch);
+        }
+        return this;
     }
     _writeDictionaryBatch(dictionary, id, isDelta = false) {
+        this._dictionaryDeltaOffsets.set(id, dictionary.length + (this._dictionaryDeltaOffsets.get(id) || 0));
         this._write(this._dictionaryBlocks.length === 0 ? `    ` : `,\n    `);
-        this._write(`${dictionaryBatchToJSON(this._schema, dictionary, id, isDelta)}`);
+        this._write(`${dictionaryBatchToJSON(dictionary, id, isDelta)}`);
         this._dictionaryBlocks.push(new FileBlock(0, 0, 0));
         return this;
     }
-    _writeRecordBatch(records) {
-        this._write(this._recordBatchBlocks.length === 0
-            ? `,\n  "batches": [\n    `
-            : `,\n    `);
-        this._write(`${recordBatchToJSON(records)}`);
-        this._recordBatchBlocks.push(new FileBlock(0, 0, 0));
+    _writeRecordBatch(batch) {
+        this._writeDictionaries(batch);
+        this._recordBatches.push(batch);
         return this;
     }
     close() {
-        if (this._recordBatchBlocks.length > 0) {
+        if (this._dictionaries.length > 0) {
+            this._write(`,\n  "dictionaries": [\n`);
+            for (const batch of this._dictionaries) {
+                super._writeDictionaries(batch);
+            }
+            this._write(`\n  ]`);
+        }
+        if (this._recordBatches.length > 0) {
+            for (let i = -1, n = this._recordBatches.length; ++i < n;) {
+                this._write(i === 0 ? `,\n  "batches": [\n    ` : `,\n    `);
+                this._write(`${recordBatchToJSON(this._recordBatches[i])}`);
+                this._recordBatchBlocks.push(new FileBlock(0, 0, 0));
+            }
             this._write(`\n  ]`);
         }
         if (this._schema) {
             this._write(`\n}`);
         }
+        this._dictionaries = [];
+        this._recordBatches = [];
         return super.close();
     }
 }
@@ -362,9 +376,8 @@ function fieldToJSON({ name, type, nullable }) {
     };
 }
 /** @ignore */
-function dictionaryBatchToJSON(schema, dictionary, id, isDelta = false) {
-    const f = schema.dictionaryFields.get(id)[0];
-    const field = new Field(f.name, f.type.dictionary, f.nullable, f.metadata);
+function dictionaryBatchToJSON(dictionary, id, isDelta = false) {
+    const field = new Field(`${id}`, dictionary.type, dictionary.nullCount > 0);
     const columns = JSONVectorAssembler.assemble(new Column(field, [dictionary]));
     return JSON.stringify({
         'id': id,

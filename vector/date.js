@@ -16,31 +16,27 @@
 // specific language governing permissions and limitations
 // under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
+const enum_1 = require("../enum");
 const base_1 = require("./base");
 const index_1 = require("./index");
 const type_1 = require("../type");
 /** @ignore */
 class DateVector extends base_1.BaseVector {
     /** @nocollapse */
-    static from(input) {
-        return index_1.vectorFromValuesWithType(() => new type_1.DateMillisecond(), input);
+    static from(...args) {
+        if (args.length === 2) {
+            return index_1.vectorFromValuesWithType(() => args[1] === enum_1.DateUnit.DAY ? new type_1.DateDay() : new type_1.DateMillisecond(), args[0]);
+        }
+        return index_1.vectorFromValuesWithType(() => new type_1.DateMillisecond(), args[0]);
     }
 }
 exports.DateVector = DateVector;
 /** @ignore */
 class DateDayVector extends DateVector {
-    /** @nocollapse */
-    static from(input) {
-        return index_1.vectorFromValuesWithType(() => new type_1.DateDay(), input);
-    }
 }
 exports.DateDayVector = DateDayVector;
 /** @ignore */
 class DateMillisecondVector extends DateVector {
-    /** @nocollapse */
-    static from(input) {
-        return index_1.vectorFromValuesWithType(() => new type_1.DateMillisecond(), input);
-    }
 }
 exports.DateMillisecondVector = DateMillisecondVector;
 

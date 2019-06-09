@@ -14,19 +14,18 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-import { selectArgs } from './util/args';
 import { DataType } from './type';
+import { selectArgs } from './util/args';
 import { selectFieldArgs } from './util/args';
 import { instance as comparer } from './visitor/typecomparator';
 export class Schema {
-    constructor(fields = [], metadata, dictionaries, dictionaryFields) {
+    constructor(fields = [], metadata, dictionaries) {
         this.fields = (fields || []);
         this.metadata = metadata || new Map();
-        if (!dictionaries || !dictionaryFields) {
-            ({ dictionaries, dictionaryFields } = generateDictionaryMap(fields, dictionaries || new Map(), dictionaryFields || new Map()));
+        if (!dictionaries) {
+            dictionaries = generateDictionaryMap(fields);
         }
         this.dictionaries = dictionaries;
-        this.dictionaryFields = dictionaryFields;
     }
     /** @nocollapse */
     static from(...args) {
@@ -54,7 +53,6 @@ export class Schema {
         const other = args[0] instanceof Schema ? args[0]
             : new Schema(selectArgs(Field, args));
         const curFields = [...this.fields];
-        const curDictionaryFields = this.dictionaryFields;
         const metadata = mergeMaps(mergeMaps(new Map(), this.metadata), other.metadata);
         const newFields = other.fields.filter((f2) => {
             const i = curFields.findIndex((f) => f.name === f2.name);
@@ -62,13 +60,8 @@ export class Schema {
                 metadata: mergeMaps(mergeMaps(new Map(), curFields[i].metadata), f2.metadata)
             })) && false : true;
         });
-        const { dictionaries: newDictionaries, dictionaryFields } = generateDictionaryMap(newFields, new Map(), new Map());
-        const newDictionaryFields = [...dictionaryFields].map(([id, newDictFields]) => {
-            return [id, [...(curDictionaryFields.get(id) || []), ...newDictFields.map((f) => {
-                        return newFields[newFields.findIndex((f2) => f.name === f2.name)] = f.clone();
-                    })]];
-        });
-        return new Schema([...curFields, ...newFields], metadata, new Map([...this.dictionaries, ...newDictionaries]), new Map([...curDictionaryFields, ...newDictionaryFields]));
+        const newDictionaries = generateDictionaryMap(newFields, new Map());
+        return new Schema([...curFields, ...newFields], metadata, new Map([...this.dictionaries, ...newDictionaries]));
     }
 }
 export class Field {
@@ -108,34 +101,29 @@ function mergeMaps(m1, m2) {
     return new Map([...(m1 || new Map()), ...(m2 || new Map())]);
 }
 /** @ignore */
-function generateDictionaryMap(fields, dictionaries, dictionaryFields) {
+function generateDictionaryMap(fields, dictionaries = new Map()) {
     for (let i = -1, n = fields.length; ++i < n;) {
         const field = fields[i];
         const type = field.type;
         if (DataType.isDictionary(type)) {
-            if (!dictionaryFields.get(type.id)) {
-                dictionaryFields.set(type.id, []);
-            }
             if (!dictionaries.has(type.id)) {
                 dictionaries.set(type.id, type.dictionary);
-                dictionaryFields.get(type.id).push(field);
             }
             else if (dictionaries.get(type.id) !== type.dictionary) {
                 throw new Error(`Cannot create Schema containing two different dictionaries with the same Id`);
             }
         }
-        if (type.children) {
-            generateDictionaryMap(type.children, dictionaries, dictionaryFields);
+        if (type.children && type.children.length > 0) {
+            generateDictionaryMap(type.children, dictionaries);
         }
     }
-    return { dictionaries, dictionaryFields };
+    return dictionaries;
 }
 // Add these here so they're picked up by the externs creator
 // in the build, and closure-compiler doesn't minify them away
 Schema.prototype.fields = null;
 Schema.prototype.metadata = null;
 Schema.prototype.dictionaries = null;
-Schema.prototype.dictionaryFields = null;
 Field.prototype.type = null;
 Field.prototype.name = null;
 Field.prototype.nullable = null;

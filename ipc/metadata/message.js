@@ -204,9 +204,9 @@ FieldNode['decode'] = decodeFieldNode;
 BufferRegion['encode'] = encodeBufferRegion;
 BufferRegion['decode'] = decodeBufferRegion;
 /** @ignore */
-function decodeSchema(_schema, dictionaries = new Map(), dictionaryFields = new Map()) {
-    const fields = decodeSchemaFields(_schema, dictionaries, dictionaryFields);
-    return new schema_1.Schema(fields, decodeCustomMetadata(_schema), dictionaries, dictionaryFields);
+function decodeSchema(_schema, dictionaries = new Map()) {
+    const fields = decodeSchemaFields(_schema, dictionaries);
+    return new schema_1.Schema(fields, decodeCustomMetadata(_schema), dictionaries);
 }
 /** @ignore */
 function decodeRecordBatch(batch, version = enum_1.MetadataVersion.V4) {
@@ -251,37 +251,36 @@ function decodeBuffers(batch, version) {
     return bufferRegions;
 }
 /** @ignore */
-function decodeSchemaFields(schema, dictionaries, dictionaryFields) {
+function decodeSchemaFields(schema, dictionaries) {
     const fields = [];
     for (let f, i = -1, j = -1, n = schema.fieldsLength(); ++i < n;) {
         if (f = schema.fields(i)) {
-            fields[++j] = schema_1.Field.decode(f, dictionaries, dictionaryFields);
+            fields[++j] = schema_1.Field.decode(f, dictionaries);
         }
     }
     return fields;
 }
 /** @ignore */
-function decodeFieldChildren(field, dictionaries, dictionaryFields) {
+function decodeFieldChildren(field, dictionaries) {
     const children = [];
     for (let f, i = -1, j = -1, n = field.childrenLength(); ++i < n;) {
         if (f = field.children(i)) {
-            children[++j] = schema_1.Field.decode(f, dictionaries, dictionaryFields);
+            children[++j] = schema_1.Field.decode(f, dictionaries);
         }
     }
     return children;
 }
 /** @ignore */
-function decodeField(f, dictionaries, dictionaryFields) {
+function decodeField(f, dictionaries) {
     let id;
     let field;
     let type;
     let keys;
     let dictType;
     let dictMeta;
-    let dictField;
     // If no dictionary encoding
-    if (!dictionaries || !dictionaryFields || !(dictMeta = f.dictionary())) {
-        type = decodeFieldType(f, decodeFieldChildren(f, dictionaries, dictionaryFields));
+    if (!dictionaries || !(dictMeta = f.dictionary())) {
+        type = decodeFieldType(f, decodeFieldChildren(f, dictionaries));
         field = new schema_1.Field(f.name(), type, f.nullable(), decodeCustomMetadata(f));
     }
     // tslint:disable
@@ -291,10 +290,9 @@ function decodeField(f, dictionaries, dictionaryFields) {
     else if (!dictionaries.has(id = dictMeta.id().low)) {
         // a dictionary index defaults to signed 32 bit int if unspecified
         keys = (keys = dictMeta.indexType()) ? decodeIndexType(keys) : new type_1.Int32();
-        dictionaries.set(id, type = decodeFieldType(f, decodeFieldChildren(f, dictionaries, dictionaryFields)));
+        dictionaries.set(id, type = decodeFieldType(f, decodeFieldChildren(f, dictionaries)));
         dictType = new type_1.Dictionary(type, keys, id, dictMeta.isOrdered());
-        dictField = new schema_1.Field(f.name(), dictType, f.nullable(), decodeCustomMetadata(f));
-        dictionaryFields.set(id, [field = dictField]);
+        field = new schema_1.Field(f.name(), dictType, f.nullable(), decodeCustomMetadata(f));
     }
     // If dictionary encoded, and have already seen this dictionary Id in the schema, then reuse the
     // data type and wrap in a new Dictionary type and field.
@@ -302,8 +300,7 @@ function decodeField(f, dictionaries, dictionaryFields) {
         // a dictionary index defaults to signed 32 bit int if unspecified
         keys = (keys = dictMeta.indexType()) ? decodeIndexType(keys) : new type_1.Int32();
         dictType = new type_1.Dictionary(dictionaries.get(id), keys, id, dictMeta.isOrdered());
-        dictField = new schema_1.Field(f.name(), dictType, f.nullable(), decodeCustomMetadata(f));
-        dictionaryFields.get(id).push(field = dictField);
+        field = new schema_1.Field(f.name(), dictType, f.nullable(), decodeCustomMetadata(f));
     }
     return field || null;
 }

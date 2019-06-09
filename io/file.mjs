@@ -63,8 +63,8 @@ export class AsyncRandomAccessFile extends AsyncByteStream {
         }
         else {
             this._pending = (async () => {
-                delete this._pending;
                 this.size = (await file.stat()).size;
+                delete this._pending;
             })();
         }
     }

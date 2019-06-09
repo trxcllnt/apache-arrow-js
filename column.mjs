@@ -33,7 +33,7 @@ export class Column extends Chunked {
                 [Vector.new(data, ...rest)]);
         if (typeof field === 'string') {
             const type = chunks[0].data.type;
-            field = new Field(field, type, chunks.some(({ nullCount }) => nullCount > 0));
+            field = new Field(field, type, true);
         }
         else if (!field.nullable && chunks.some(({ nullCount }) => nullCount > 0)) {
             field = field.clone({ nullable: true });

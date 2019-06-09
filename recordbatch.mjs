@@ -17,12 +17,13 @@
 import { Data } from './data';
 import { Table } from './table';
 import { Vector } from './vector';
+import { Visitor } from './visitor';
 import { Schema } from './schema';
 import { isIterable } from './util/compat';
 import { Chunked } from './vector/chunked';
 import { MapVector } from './vector/index';
 import { selectFieldArgs } from './util/args';
-import { Map_ } from './type';
+import { DataType, Map_ } from './type';
 import { ensureSameLengthData } from './util/recordbatch';
 export class RecordBatch extends MapVector {
     constructor(...args) {
@@ -62,6 +63,9 @@ export class RecordBatch extends MapVector {
     }
     get schema() { return this._schema; }
     get numCols() { return this._schema.fields.length; }
+    get dictionaries() {
+        return this._dictionaries || (this._dictionaries = DictionaryCollector.collect(this));
+    }
     select(...columnNames) {
         const nameToIndex = this._schema.fields.reduce((m, f, i) => m.set(f.name, i), new Map());
         return this.selectAt(...columnNames.map((columnName) => nameToIndex.get(columnName)).filter((x) => x > -1));
@@ -84,6 +88,32 @@ export class RecordBatch extends MapVector {
 export class _InternalEmptyPlaceholderRecordBatch extends RecordBatch {
     constructor(schema) {
         super(schema, 0, schema.fields.map((f) => Data.new(f.type, 0, 0, 0)));
+    }
+}
+/** @ignore */
+class DictionaryCollector extends Visitor {
+    constructor() {
+        super(...arguments);
+        this.dictionaries = new Map();
+    }
+    static collect(batch) {
+        return new DictionaryCollector().visit(batch.data, new Map_(batch.schema.fields)).dictionaries;
+    }
+    visit(data, type) {
+        if (DataType.isDictionary(type)) {
+            return this.visitDictionary(data, type);
+        }
+        else {
+            data.childData.forEach((child, i) => this.visit(child, type.children[i].type));
+        }
+        return this;
+    }
+    visitDictionary(data, type) {
+        const dictionary = data.dictionary;
+        if (dictionary && dictionary.length > 0) {
+            this.dictionaries.set(type.id, dictionary);
+        }
+        return this;
     }
 }
 

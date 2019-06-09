@@ -1,3 +1,4 @@
+import { Vector } from '../vector';
 import { IntBuilder } from './int';
 import { Dictionary, DataType } from '../type';
 import { Builder, BuilderOptions } from '../builder';
@@ -7,7 +8,11 @@ export interface DictionaryBuilderOptions<T extends DataType = any, TNull = any>
 }
 /** @ignore */
 export declare class DictionaryBuilder<T extends Dictionary, TNull = any> extends Builder<T, TNull> {
-    protected _codes: any;
+    protected _dictionariesOffset: number;
+    protected _dictionary: Vector<T['dictionary']> | null;
+    protected _keysToIndices: {
+        [key: string]: number;
+    };
     readonly indices: IntBuilder<T['indices']>;
     readonly dictionary: Builder<T['dictionary']>;
     constructor({ 'type': type, 'nullValues': nulls, 'dictionaryHashFunction': hashFn }: DictionaryBuilderOptions<T, TNull>);

@@ -19,8 +19,8 @@ import { Dictionary, Utf8, Binary, Decimal, FixedSizeBinary, List, FixedSizeList
 import { DictionaryBatch, RecordBatch, FieldNode, BufferRegion } from './message';
 import { TimeUnit, Precision, IntervalUnit, UnionMode, DateUnit } from '../../enum';
 /** @ignore */
-export function schemaFromJSON(_schema, dictionaries = new Map(), dictionaryFields = new Map()) {
-    return new Schema(schemaFieldsFromJSON(_schema, dictionaries, dictionaryFields), customMetadataFromJSON(_schema['customMetadata']), dictionaries, dictionaryFields);
+export function schemaFromJSON(_schema, dictionaries = new Map()) {
+    return new Schema(schemaFieldsFromJSON(_schema, dictionaries), customMetadataFromJSON(_schema['customMetadata']), dictionaries);
 }
 /** @ignore */
 export function recordBatchFromJSON(b) {
@@ -31,12 +31,12 @@ export function dictionaryBatchFromJSON(b) {
     return new DictionaryBatch(recordBatchFromJSON(b['data']), b['id'], b['isDelta']);
 }
 /** @ignore */
-function schemaFieldsFromJSON(_schema, dictionaries, dictionaryFields) {
-    return (_schema['fields'] || []).filter(Boolean).map((f) => Field.fromJSON(f, dictionaries, dictionaryFields));
+function schemaFieldsFromJSON(_schema, dictionaries) {
+    return (_schema['fields'] || []).filter(Boolean).map((f) => Field.fromJSON(f, dictionaries));
 }
 /** @ignore */
-function fieldChildrenFromJSON(_field, dictionaries, dictionaryFields) {
-    return (_field['children'] || []).filter(Boolean).map((f) => Field.fromJSON(f, dictionaries, dictionaryFields));
+function fieldChildrenFromJSON(_field, dictionaries) {
+    return (_field['children'] || []).filter(Boolean).map((f) => Field.fromJSON(f, dictionaries));
 }
 /** @ignore */
 function fieldNodesFromJSON(xs) {
@@ -63,17 +63,16 @@ function nullCountFromJSON(validity) {
     return (validity || []).reduce((sum, val) => sum + +(val === 0), 0);
 }
 /** @ignore */
-export function fieldFromJSON(_field, dictionaries, dictionaryFields) {
+export function fieldFromJSON(_field, dictionaries) {
     let id;
     let keys;
     let field;
     let dictMeta;
     let type;
     let dictType;
-    let dictField;
     // If no dictionary encoding
-    if (!dictionaries || !dictionaryFields || !(dictMeta = _field['dictionary'])) {
-        type = typeFromJSON(_field, fieldChildrenFromJSON(_field, dictionaries, dictionaryFields));
+    if (!dictionaries || !(dictMeta = _field['dictionary'])) {
+        type = typeFromJSON(_field, fieldChildrenFromJSON(_field, dictionaries));
         field = new Field(_field['name'], type, _field['nullable'], customMetadataFromJSON(_field['customMetadata']));
     }
     // tslint:disable
@@ -83,10 +82,9 @@ export function fieldFromJSON(_field, dictionaries, dictionaryFields) {
     else if (!dictionaries.has(id = dictMeta['id'])) {
         // a dictionary index defaults to signed 32 bit int if unspecified
         keys = (keys = dictMeta['indexType']) ? indexTypeFromJSON(keys) : new Int32();
-        dictionaries.set(id, type = typeFromJSON(_field, fieldChildrenFromJSON(_field, dictionaries, dictionaryFields)));
+        dictionaries.set(id, type = typeFromJSON(_field, fieldChildrenFromJSON(_field, dictionaries)));
         dictType = new Dictionary(type, keys, id, dictMeta['isOrdered']);
-        dictField = new Field(_field['name'], dictType, _field['nullable'], customMetadataFromJSON(_field['customMetadata']));
-        dictionaryFields.set(id, [field = dictField]);
+        field = new Field(_field['name'], dictType, _field['nullable'], customMetadataFromJSON(_field['customMetadata']));
     }
     // If dictionary encoded, and have already seen this dictionary Id in the schema, then reuse the
     // data type and wrap in a new Dictionary type and field.
@@ -94,8 +92,7 @@ export function fieldFromJSON(_field, dictionaries, dictionaryFields) {
         // a dictionary index defaults to signed 32 bit int if unspecified
         keys = (keys = dictMeta['indexType']) ? indexTypeFromJSON(keys) : new Int32();
         dictType = new Dictionary(dictionaries.get(id), keys, id, dictMeta['isOrdered']);
-        dictField = new Field(_field['name'], dictType, _field['nullable'], customMetadataFromJSON(_field['customMetadata']));
-        dictionaryFields.get(id).push(field = dictField);
+        field = new Field(_field['name'], dictType, _field['nullable'], customMetadataFromJSON(_field['customMetadata']));
     }
     return field || null;
 }

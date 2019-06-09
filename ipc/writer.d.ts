@@ -1,9 +1,9 @@
 /// <reference types="node" />
 import { Table } from '../table';
 import { Vector } from '../vector';
-import { Schema, Field } from '../schema';
+import { DataType } from '../type';
+import { Schema } from '../schema';
 import { Message } from './metadata/message';
-import { DataType, Dictionary } from '../type';
 import { FileBlock } from './metadata/file';
 import { MessageHeader } from '../enum';
 import { WritableSink, AsyncByteQueue } from '../io/stream';
@@ -39,6 +39,7 @@ export declare class RecordBatchWriter<T extends {
     protected _schema: Schema | null;
     protected _dictionaryBlocks: FileBlock[];
     protected _recordBatchBlocks: FileBlock[];
+    protected _dictionaryDeltaOffsets: Map<number, number>;
     toString(sync: true): string;
     toString(sync?: false): Promise<string>;
     toUint8Array(sync: true): Uint8Array;
@@ -59,13 +60,13 @@ export declare class RecordBatchWriter<T extends {
     protected _writeMessage<T extends MessageHeader>(message: Message<T>, alignment?: number): this;
     protected _write(chunk: ArrayBufferViewInput): this;
     protected _writeSchema(schema: Schema<T>): this;
-    protected _writeFooter(): this;
+    protected _writeFooter(schema: Schema<T>): this;
     protected _writeMagic(): this;
     protected _writePadding(nBytes: number): this;
-    protected _writeRecordBatch(records: RecordBatch<T>): this;
+    protected _writeRecordBatch(batch: RecordBatch<T>): this;
     protected _writeDictionaryBatch(dictionary: Vector, id: number, isDelta?: boolean): this;
     protected _writeBodyBuffers(buffers: ArrayBufferView[]): this;
-    protected _writeDictionaries(dictionaryFields: Map<number, Field<Dictionary<any, any>>[]>): this;
+    protected _writeDictionaries(batch: RecordBatch<T>): this;
 }
 /** @ignore */
 export declare class RecordBatchStreamWriter<T extends {
@@ -110,7 +111,7 @@ export declare class RecordBatchFileWriter<T extends {
     } = any>(input: PromiseLike<Table<T> | Iterable<RecordBatch<T>>>): Promise<RecordBatchFileWriter<T>>;
     constructor();
     protected _writeSchema(schema: Schema<T>): this;
-    protected _writeFooter(): this;
+    protected _writeFooter(schema: Schema<T>): this;
 }
 /** @ignore */
 export declare class RecordBatchJSONWriter<T extends {
@@ -128,11 +129,13 @@ export declare class RecordBatchJSONWriter<T extends {
     static writeAll<T extends {
         [key: string]: DataType;
     } = any>(this: typeof RecordBatchWriter, input: PromiseLike<Table<T> | Iterable<RecordBatch<T>>>): Promise<RecordBatchJSONWriter<T>>;
+    private _recordBatches;
+    private _dictionaries;
     constructor();
     protected _writeMessage(): this;
     protected _writeSchema(schema: Schema<T>): this;
-    protected _writeDictionaries(dictionaryFields: Map<number, Field<Dictionary<any, any>>[]>): this;
+    protected _writeDictionaries(batch: RecordBatch<T>): this;
     protected _writeDictionaryBatch(dictionary: Vector, id: number, isDelta?: boolean): this;
-    protected _writeRecordBatch(records: RecordBatch<T>): this;
+    protected _writeRecordBatch(batch: RecordBatch<T>): this;
     close(): void;
 }

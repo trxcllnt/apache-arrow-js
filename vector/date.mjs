@@ -14,29 +14,25 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+import { DateUnit } from '../enum';
 import { BaseVector } from './base';
 import { vectorFromValuesWithType } from './index';
 import { DateDay, DateMillisecond } from '../type';
 /** @ignore */
 export class DateVector extends BaseVector {
     /** @nocollapse */
-    static from(input) {
-        return vectorFromValuesWithType(() => new DateMillisecond(), input);
+    static from(...args) {
+        if (args.length === 2) {
+            return vectorFromValuesWithType(() => args[1] === DateUnit.DAY ? new DateDay() : new DateMillisecond(), args[0]);
+        }
+        return vectorFromValuesWithType(() => new DateMillisecond(), args[0]);
     }
 }
 /** @ignore */
 export class DateDayVector extends DateVector {
-    /** @nocollapse */
-    static from(input) {
-        return vectorFromValuesWithType(() => new DateDay(), input);
-    }
 }
 /** @ignore */
 export class DateMillisecondVector extends DateVector {
-    /** @nocollapse */
-    static from(input) {
-        return vectorFromValuesWithType(() => new DateMillisecond(), input);
-    }
 }
 
 //# sourceMappingURL=date.mjs.map

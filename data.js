@@ -24,8 +24,9 @@ const buffer_1 = require("./util/buffer");
 /** @ignore */ exports.kUnknownNullCount = -1;
 /** @ignore */
 class Data {
-    constructor(type, offset, length, nullCount, buffers, childData) {
+    constructor(type, offset, length, nullCount, buffers, childData, dictionary) {
         this.type = type;
+        this.dictionary = dictionary;
         this.offset = Math.floor(Math.max(offset || 0, 0));
         this.length = Math.floor(Math.max(length || 0, 0));
         this._nullCount = Math.floor(Math.max(nullCount || 0, -1));
@@ -71,7 +72,7 @@ class Data {
         return nullCount;
     }
     clone(type, offset = this.offset, length = this.length, nullCount = this._nullCount, buffers = this, childData = this.childData) {
-        return new Data(type, offset, length, nullCount, buffers, childData);
+        return new Data(type, offset, length, nullCount, buffers, childData, this.dictionary);
     }
     slice(offset, length) {
         const { stride, typeId, childData } = this;
@@ -116,7 +117,7 @@ class Data {
     // Convenience methods for creating Data instances for each of the Arrow Vector types
     //
     /** @nocollapse */
-    static new(type, offset, length, nullCount, buffers, childData) {
+    static new(type, offset, length, nullCount, buffers, childData, dictionary) {
         if (buffers instanceof Data) {
             buffers = buffers.buffers;
         }
@@ -126,7 +127,7 @@ class Data {
         switch (type.typeId) {
             case enum_1.Type.Null: return Data.Null(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY]);
             case enum_1.Type.Int: return Data.Int(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
-            case enum_1.Type.Dictionary: return Data.Dictionary(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
+            case enum_1.Type.Dictionary: return Data.Dictionary(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || [], dictionary);
             case enum_1.Type.Float: return Data.Float(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
             case enum_1.Type.Bool: return Data.Bool(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
             case enum_1.Type.Decimal: return Data.Decimal(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
@@ -154,8 +155,8 @@ class Data {
         return new Data(type, offset, length, nullCount, [undefined, buffer_1.toArrayBufferView(type.ArrayType, data), buffer_1.toUint8Array(nullBitmap)]);
     }
     /** @nocollapse */
-    static Dictionary(type, offset, length, nullCount, nullBitmap, data) {
-        return new Data(type, offset, length, nullCount, [undefined, buffer_1.toArrayBufferView(type.indices.ArrayType, data), buffer_1.toUint8Array(nullBitmap)]);
+    static Dictionary(type, offset, length, nullCount, nullBitmap, data, dictionary) {
+        return new Data(type, offset, length, nullCount, [undefined, buffer_1.toArrayBufferView(type.indices.ArrayType, data), buffer_1.toUint8Array(nullBitmap)], [], dictionary);
     }
     /** @nocollapse */
     static Float(type, offset, length, nullCount, nullBitmap, data) {

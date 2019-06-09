@@ -1,6 +1,7 @@
 import { Data } from '../data';
 import * as type from '../type';
 import { Field } from '../schema';
+import { Vector } from '../vector';
 import { DataType } from '../type';
 import { Visitor } from '../visitor';
 import { BufferRegion, FieldNode } from '../ipc/metadata/message';
@@ -16,7 +17,8 @@ export declare class VectorLoader extends Visitor {
     private nodesIndex;
     private buffers;
     private buffersIndex;
-    constructor(bytes: Uint8Array, nodes: FieldNode[], buffers: BufferRegion[]);
+    private dictionaries;
+    constructor(bytes: Uint8Array, nodes: FieldNode[], buffers: BufferRegion[], dictionaries: Map<number, Vector<any>>);
     visitNull<T extends type.Null>(type: T, { length, nullCount }?: FieldNode): Data<T>;
     visitBool<T extends type.Bool>(type: T, { length, nullCount }?: FieldNode): Data<T>;
     visitInt<T extends type.Int>(type: T, { length, nullCount }?: FieldNode): Data<T>;
@@ -43,11 +45,12 @@ export declare class VectorLoader extends Visitor {
     protected readOffsets<T extends DataType>(type: T, buffer?: BufferRegion): Uint8Array;
     protected readTypeIds<T extends DataType>(type: T, buffer?: BufferRegion): Uint8Array;
     protected readData<T extends DataType>(_type: T, { length, offset }?: BufferRegion): Uint8Array;
+    protected readDictionary<T extends type.Dictionary>(type: T): Vector<T['dictionary']>;
 }
 /** @ignore */
 export declare class JSONVectorLoader extends VectorLoader {
     private sources;
-    constructor(sources: any[][], nodes: FieldNode[], buffers: BufferRegion[]);
+    constructor(sources: any[][], nodes: FieldNode[], buffers: BufferRegion[], dictionaries: Map<number, Vector<any>>);
     protected readNullBitmap<T extends DataType>(_type: T, nullCount: number, { offset }?: BufferRegion): Uint8Array;
     protected readOffsets<T extends DataType>(_type: T, { offset }?: BufferRegion): Uint8Array;
     protected readTypeIds<T extends DataType>(type: T, { offset }?: BufferRegion): Uint8Array;

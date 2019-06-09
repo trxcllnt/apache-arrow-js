@@ -14,7 +14,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-import { DataType } from '../../type';
 import { Builder } from '../../builder/index';
 /** @ignore */
 export function builderThroughDOMStream(options) {
@@ -49,22 +48,6 @@ export class BuilderTransform {
             'highWaterMark': writableHighWaterMark,
             'size': (value) => this._writeValueAndReturnChunkSize(value),
         });
-        if (DataType.isDictionary(builderOptions.type)) {
-            let chunks = [];
-            this._enqueue = (controller, chunk) => {
-                this._bufferedSize = 0;
-                if (chunk !== null) {
-                    chunks.push(chunk);
-                }
-                else {
-                    const chunks_ = chunks;
-                    chunks = [];
-                    chunks_.forEach((x) => controller.enqueue(x));
-                    controller.close();
-                    this._controller = null;
-                }
-            };
-        }
     }
     _writeValueAndReturnChunkSize(value) {
         const bufferedSize = this._bufferedSize;

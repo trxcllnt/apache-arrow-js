@@ -150,17 +150,7 @@ class Builder {
      * @nocollapse
      */
     static throughIterable(options) {
-        const build = throughIterable(options);
-        if (!type_1.DataType.isDictionary(options.type)) {
-            return build;
-        }
-        return function* (source) {
-            const chunks = [];
-            for (const chunk of build(source)) {
-                chunks.push(chunk);
-            }
-            yield* chunks;
-        };
+        return throughIterable(options);
     }
     /**
      * Transform an `AsyncIterable` of arbitrary JavaScript values into a
@@ -188,17 +178,7 @@ class Builder {
      * @nocollapse
      */
     static throughAsyncIterable(options) {
-        const build = throughAsyncIterable(options);
-        if (!type_1.DataType.isDictionary(options.type)) {
-            return build;
-        }
-        return async function* (source) {
-            const chunks = [];
-            for await (const chunk of build(source)) {
-                chunks.push(chunk);
-            }
-            yield* chunks;
-        };
+        return throughAsyncIterable(options);
     }
     /**
      * Flush the `Builder` and return a `Vector<T>`.

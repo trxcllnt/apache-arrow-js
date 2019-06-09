@@ -3,7 +3,7 @@ import { DataType, Dictionary } from '../type';
 import { AbstractVector, Vector } from '../vector';
 import { Clonable, Sliceable, Applicative } from '../vector';
 /** @ignore */
-declare type ChunkedDict<T extends DataType> = T extends Dictionary ? T['dictionaryVector'] : null | never;
+declare type ChunkedDict<T extends DataType> = T extends Dictionary ? Vector<T['dictionary']> : null | never;
 /** @ignore */
 declare type ChunkedKeys<T extends DataType> = T extends Dictionary ? Vector<T['indices']> | Chunked<T['indices']> : null | never;
 /** @ignore */
