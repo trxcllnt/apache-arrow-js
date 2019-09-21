@@ -1,7 +1,7 @@
 import { Data } from './data';
 import { BuilderType as B, VectorType as V } from './interfaces';
 import { BufferBuilder, BitmapBufferBuilder, DataBufferBuilder, OffsetsBufferBuilder } from './builder/buffer';
-import { DataType, Float, Int, Decimal, FixedSizeBinary, Date_, Time, Timestamp, Interval, Utf8, Binary, List } from './type';
+import { DataType, Float, Int, Decimal, FixedSizeBinary, Date_, Time, Timestamp, Interval, Utf8, Binary, List, Map_ } from './type';
 /**
  * A set of options required to create a `Builder` instance for a given `DataType`.
  * @see {@link Builder}
@@ -276,7 +276,7 @@ export declare abstract class FixedWidthBuilder<T extends Int | Float | FixedSiz
     setValue(index: number, value: T['TValue']): void;
 }
 /** @ignore */
-export declare abstract class VariableWidthBuilder<T extends Binary | Utf8 | List, TNull = any> extends Builder<T, TNull> {
+export declare abstract class VariableWidthBuilder<T extends Binary | Utf8 | List | Map_, TNull = any> extends Builder<T, TNull> {
     protected _pendingLength: number;
     protected _offsets: OffsetsBufferBuilder;
     protected _pending: Map<number, any> | undefined;

@@ -10,6 +10,19 @@ import { WritableSink, AsyncByteQueue } from '../io/stream';
 import { ArrayBufferViewInput } from '../util/buffer';
 import { RecordBatch } from '../recordbatch';
 import { Writable, ReadableInterop, ReadableDOMStreamOptions } from '../io/interfaces';
+export interface RecordBatchStreamWriterOptions {
+    /**
+     *
+     */
+    autoDestroy?: boolean;
+    /**
+     * A flag indicating whether the RecordBatchWriter should construct pre-0.15.0
+     * encapsulated IPC Messages, which reserves  4 bytes for the Message metadata
+     * length instead of 8.
+     * @see https://issues.apache.org/jira/browse/ARROW-6313
+     */
+    writeLegacyIpcFormat?: boolean;
+}
 export declare class RecordBatchWriter<T extends {
     [key: string]: DataType;
 } = any> extends ReadableInterop<Uint8Array> implements Writable<RecordBatch<T>> {
@@ -29,12 +42,11 @@ export declare class RecordBatchWriter<T extends {
         writable: WritableStream<Table<T> | RecordBatch<T>>;
         readable: ReadableStream<Uint8Array>;
     };
-    constructor(options?: {
-        autoDestroy: boolean;
-    });
+    constructor(options?: RecordBatchStreamWriterOptions);
     protected _position: number;
     protected _started: boolean;
     protected _autoDestroy: boolean;
+    protected _writeLegacyIpcFormat: boolean;
     protected _sink: AsyncByteQueue<Uint8Array>;
     protected _schema: Schema | null;
     protected _dictionaryBlocks: FileBlock[];
@@ -74,24 +86,16 @@ export declare class RecordBatchStreamWriter<T extends {
 } = any> extends RecordBatchWriter<T> {
     static writeAll<T extends {
         [key: string]: DataType;
-    } = any>(input: Table<T> | Iterable<RecordBatch<T>>, options?: {
-        autoDestroy: true;
-    }): RecordBatchStreamWriter<T>;
+    } = any>(input: Table<T> | Iterable<RecordBatch<T>>, options?: RecordBatchStreamWriterOptions): RecordBatchStreamWriter<T>;
     static writeAll<T extends {
         [key: string]: DataType;
-    } = any>(input: AsyncIterable<RecordBatch<T>>, options?: {
-        autoDestroy: true;
-    }): Promise<RecordBatchStreamWriter<T>>;
+    } = any>(input: AsyncIterable<RecordBatch<T>>, options?: RecordBatchStreamWriterOptions): Promise<RecordBatchStreamWriter<T>>;
     static writeAll<T extends {
         [key: string]: DataType;
-    } = any>(input: PromiseLike<AsyncIterable<RecordBatch<T>>>, options?: {
-        autoDestroy: true;
-    }): Promise<RecordBatchStreamWriter<T>>;
+    } = any>(input: PromiseLike<AsyncIterable<RecordBatch<T>>>, options?: RecordBatchStreamWriterOptions): Promise<RecordBatchStreamWriter<T>>;
     static writeAll<T extends {
         [key: string]: DataType;
-    } = any>(input: PromiseLike<Table<T> | Iterable<RecordBatch<T>>>, options?: {
-        autoDestroy: true;
-    }): Promise<RecordBatchStreamWriter<T>>;
+    } = any>(input: PromiseLike<Table<T> | Iterable<RecordBatch<T>>>, options?: RecordBatchStreamWriterOptions): Promise<RecordBatchStreamWriter<T>>;
 }
 /** @ignore */
 export declare class RecordBatchFileWriter<T extends {
@@ -133,6 +137,7 @@ export declare class RecordBatchJSONWriter<T extends {
     private _dictionaries;
     constructor();
     protected _writeMessage(): this;
+    protected _writeFooter(schema: Schema<T>): this;
     protected _writeSchema(schema: Schema<T>): this;
     protected _writeDictionaries(batch: RecordBatch<T>): this;
     protected _writeDictionaryBatch(dictionary: Vector, id: number, isDelta?: boolean): this;

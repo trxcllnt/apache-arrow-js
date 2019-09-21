@@ -45,14 +45,17 @@ export class VectorAssembler extends Visitor {
                 /* istanbul ignore next */
                 throw new RangeError('Cannot write arrays larger than 2^31 - 1 in length');
             }
-            addBuffer.call(this, nullCount <= 0
-                ? new Uint8Array(0) // placeholder validity buffer
-                : truncateBitmap(data.offset, length, data.nullBitmap)).nodes.push(new FieldNode(length, nullCount));
+            if (!DataType.isNull(vector.type)) {
+                addBuffer.call(this, nullCount <= 0
+                    ? new Uint8Array(0) // placeholder validity buffer
+                    : truncateBitmap(data.offset, length, data.nullBitmap));
+            }
+            this.nodes.push(new FieldNode(length, nullCount));
         }
         return super.visit(vector);
     }
     visitNull(_nullV) {
-        return addBuffer.call(this, new Uint8Array(0));
+        return this;
     }
     visitDictionary(vector) {
         // Assemble the indices here, Dictionary assembled separately.
@@ -158,7 +161,7 @@ function assembleFlatListVector(vector) {
 /** @ignore */
 function assembleListVector(vector) {
     const { length, valueOffsets } = vector;
-    // If we have valueOffsets (ListVector), push that buffer first
+    // If we have valueOffsets (MapVector, ListVector), push that buffer first
     if (valueOffsets) {
         addBuffer.call(this, rebaseValueOffsets(valueOffsets[0], length, valueOffsets));
     }
@@ -184,6 +187,6 @@ VectorAssembler.prototype.visitStruct = assembleNestedVector;
 VectorAssembler.prototype.visitUnion = assembleUnion;
 VectorAssembler.prototype.visitInterval = assembleFlatVector;
 VectorAssembler.prototype.visitFixedSizeList = assembleListVector;
-VectorAssembler.prototype.visitMap = assembleNestedVector;
+VectorAssembler.prototype.visitMap = assembleListVector;
 
 //# sourceMappingURL=vectorassembler.mjs.map

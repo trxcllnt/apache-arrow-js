@@ -16,17 +16,16 @@
 // specific language governing permissions and limitations
 // under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
-const vector_1 = require("../vector");
-const base_1 = require("./base");
 const row_1 = require("./row");
-const type_1 = require("../type");
+const base_1 = require("./base");
+/** @ignore */ const kRowIndex = Symbol.for('rowIndex');
 /** @ignore */
 class StructVector extends base_1.BaseVector {
-    asMap(keysSorted = false) {
-        return vector_1.Vector.new(this.data.clone(new type_1.Map_(this.type.children, keysSorted)));
-    }
-    get rowProxy() {
-        return this._rowProxy || (this._rowProxy = row_1.RowProxyGenerator.new(this, this.type.children || [], false));
+    bind(index) {
+        const proto = this._row || (this._row = new row_1.StructRow(this));
+        const bound = Object.create(proto);
+        bound[kRowIndex] = index;
+        return bound;
     }
 }
 exports.StructVector = StructVector;

@@ -8,8 +8,8 @@ export interface DictionaryBuilderOptions<T extends DataType = any, TNull = any>
 }
 /** @ignore */
 export declare class DictionaryBuilder<T extends Dictionary, TNull = any> extends Builder<T, TNull> {
-    protected _dictionariesOffset: number;
-    protected _dictionary: Vector<T['dictionary']> | null;
+    protected _dictionaryOffset: number;
+    protected _dictionary?: Vector<T['dictionary']>;
     protected _keysToIndices: {
         [key: string]: number;
     };
@@ -28,6 +28,6 @@ export declare class DictionaryBuilder<T extends Dictionary, TNull = any> extend
     flush(): import("../data").Data<T>;
     finish(): this;
     clear(): this;
-    valueToKey(val: any): any;
+    valueToKey(val: any): string | number;
 }
 export {};

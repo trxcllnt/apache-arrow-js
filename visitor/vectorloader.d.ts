@@ -19,7 +19,7 @@ export declare class VectorLoader extends Visitor {
     private buffersIndex;
     private dictionaries;
     constructor(bytes: Uint8Array, nodes: FieldNode[], buffers: BufferRegion[], dictionaries: Map<number, Vector<any>>);
-    visitNull<T extends type.Null>(type: T, { length, nullCount }?: FieldNode): Data<T>;
+    visitNull<T extends type.Null>(type: T, { length, }?: FieldNode): Data<T>;
     visitBool<T extends type.Bool>(type: T, { length, nullCount }?: FieldNode): Data<T>;
     visitInt<T extends type.Int>(type: T, { length, nullCount }?: FieldNode): Data<T>;
     visitFloat<T extends type.Float>(type: T, { length, nullCount }?: FieldNode): Data<T>;

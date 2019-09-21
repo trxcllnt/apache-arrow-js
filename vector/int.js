@@ -19,78 +19,45 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const data_1 = require("../data");
 const vector_1 = require("../vector");
 const base_1 = require("./base");
-const type_1 = require("../type");
+const index_1 = require("./index");
+const compat_1 = require("../util/compat");
 const buffer_1 = require("../util/buffer");
+const type_1 = require("../type");
 /** @ignore */
 class IntVector extends base_1.BaseVector {
     /** @nocollapse */
-    static from(data, is64) {
-        let length = 0;
-        let type = null;
-        switch (this) {
-            case Int8Vector:
-                data = buffer_1.toInt8Array(data);
-                is64 = false;
-                break;
-            case Int16Vector:
-                data = buffer_1.toInt16Array(data);
-                is64 = false;
-                break;
-            case Int32Vector:
-                data = buffer_1.toInt32Array(data);
-                is64 = false;
-                break;
-            case Int64Vector:
-                data = buffer_1.toInt32Array(data);
-                is64 = true;
-                break;
-            case Uint8Vector:
-                data = buffer_1.toUint8Array(data);
-                is64 = false;
-                break;
-            case Uint16Vector:
-                data = buffer_1.toUint16Array(data);
-                is64 = false;
-                break;
-            case Uint32Vector:
-                data = buffer_1.toUint32Array(data);
-                is64 = false;
-                break;
-            case Uint64Vector:
-                data = buffer_1.toUint32Array(data);
-                is64 = true;
-                break;
-        }
-        if (is64 === true) {
-            length = data.length * 0.5;
-            type = data instanceof Int32Array ? new type_1.Int64() : new type_1.Uint64();
-        }
-        else {
-            length = data.length;
-            switch (data.constructor) {
-                case Int8Array:
-                    type = new type_1.Int8();
-                    break;
-                case Int16Array:
-                    type = new type_1.Int16();
-                    break;
-                case Int32Array:
-                    type = new type_1.Int32();
-                    break;
-                case Uint8Array:
-                    type = new type_1.Uint8();
-                    break;
-                case Uint16Array:
-                    type = new type_1.Uint16();
-                    break;
-                case Uint32Array:
-                    type = new type_1.Uint32();
-                    break;
+    static from(...args) {
+        let [input, is64bit = false] = args;
+        let ArrowType = vectorTypeToDataType(this, is64bit);
+        if ((input instanceof ArrayBuffer) || ArrayBuffer.isView(input)) {
+            let InputType = arrayTypeToDataType(input.constructor, is64bit) || ArrowType;
+            // Special case, infer the Arrow DataType from the input if calling the base
+            // IntVector.from with a TypedArray, e.g. `IntVector.from(new Int32Array())`
+            if (ArrowType === null) {
+                ArrowType = InputType;
+            }
+            // If the DataType inferred from the Vector constructor matches the
+            // DataType inferred from the input arguments, return zero-copy view
+            if (ArrowType && ArrowType === InputType) {
+                let type = new ArrowType();
+                let length = input.byteLength / type.ArrayType.BYTES_PER_ELEMENT;
+                // If the ArrowType is 64bit but the input type is 32bit pairs, update the logical length
+                if (convert32To64Bit(ArrowType, input.constructor)) {
+                    length *= 0.5;
+                }
+                return vector_1.Vector.new(data_1.Data.Int(type, 0, length, 0, null, input));
             }
         }
-        return type !== null
-            ? vector_1.Vector.new(data_1.Data.Int(type, 0, length, 0, null, data))
-            : (() => { throw new TypeError('Unrecognized IntVector input'); })();
+        if (ArrowType) {
+            // If the DataType inferred from the Vector constructor is different than
+            // the DataType inferred from the input TypedArray, or if input isn't a
+            // TypedArray, use the Builders to construct the result Vector
+            return index_1.vectorFromValuesWithType(() => new ArrowType(), input);
+        }
+        if ((input instanceof DataView) || (input instanceof ArrayBuffer)) {
+            throw new TypeError(`Cannot infer integer type from instance of ${input.constructor.name}`);
+        }
+        throw new TypeError('Unrecognized IntVector input');
     }
 }
 exports.IntVector = IntVector;
@@ -138,5 +105,37 @@ class Uint64Vector extends IntVector {
     }
 }
 exports.Uint64Vector = Uint64Vector;
+const convert32To64Bit = (typeCtor, dataCtor) => {
+    return (typeCtor === type_1.Int64 || typeCtor === type_1.Uint64) &&
+        (dataCtor === Int32Array || dataCtor === Uint32Array);
+};
+/** @ignore */
+const arrayTypeToDataType = (ctor, is64bit) => {
+    switch (ctor) {
+        case Int8Array: return type_1.Int8;
+        case Int16Array: return type_1.Int16;
+        case Int32Array: return is64bit ? type_1.Int64 : type_1.Int32;
+        case compat_1.BigInt64Array: return type_1.Int64;
+        case Uint8Array: return type_1.Uint8;
+        case Uint16Array: return type_1.Uint16;
+        case Uint32Array: return is64bit ? type_1.Uint64 : type_1.Uint32;
+        case compat_1.BigUint64Array: return type_1.Uint64;
+        default: return null;
+    }
+};
+/** @ignore */
+const vectorTypeToDataType = (ctor, is64bit) => {
+    switch (ctor) {
+        case Int8Vector: return type_1.Int8;
+        case Int16Vector: return type_1.Int16;
+        case Int32Vector: return is64bit ? type_1.Int64 : type_1.Int32;
+        case Int64Vector: return type_1.Int64;
+        case Uint8Vector: return type_1.Uint8;
+        case Uint16Vector: return type_1.Uint16;
+        case Uint32Vector: return is64bit ? type_1.Uint64 : type_1.Uint32;
+        case Uint64Vector: return type_1.Uint64;
+        default: return null;
+    }
+};
 
 //# sourceMappingURL=int.js.map

@@ -21,6 +21,10 @@ const builder_1 = require("../builder");
 class NullBuilder extends builder_1.Builder {
     // @ts-ignore
     setValue(index, value) { }
+    setValid(index, valid) {
+        this.length = Math.max(index + 1, this.length);
+        return valid;
+    }
 }
 exports.NullBuilder = NullBuilder;
 

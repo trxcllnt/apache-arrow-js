@@ -171,7 +171,7 @@ declare type DataTypeToVector<T extends DataType = any> = {
     [Type.Interval]: T extends type.Interval ? vecs.IntervalVector : vecs.BaseVector<T>;
     [Type.IntervalDayTime]: T extends type.IntervalDayTime ? vecs.IntervalDayTimeVector : vecs.BaseVector<T>;
     [Type.IntervalYearMonth]: T extends type.IntervalYearMonth ? vecs.IntervalYearMonthVector : vecs.BaseVector<T>;
-    [Type.Map]: T extends type.Map_ ? vecs.MapVector<T['dataTypes']> : vecs.BaseVector<T>;
+    [Type.Map]: T extends type.Map_ ? vecs.MapVector<T['keyType'], T['valueType']> : vecs.BaseVector<T>;
     [Type.List]: T extends type.List ? vecs.ListVector<T['valueType']> : vecs.BaseVector<T>;
     [Type.Struct]: T extends type.Struct ? vecs.StructVector<T['dataTypes']> : vecs.BaseVector<T>;
     [Type.Dictionary]: T extends type.Dictionary ? vecs.DictionaryVector<T['valueType'], T['indices']> : vecs.BaseVector<T>;
@@ -265,7 +265,7 @@ declare type TypeToBuilder<T extends Type = any, TNull = any> = {
     [Type.Interval]: builders.IntervalBuilder<any, TNull>;
     [Type.IntervalDayTime]: builders.IntervalDayTimeBuilder<TNull>;
     [Type.IntervalYearMonth]: builders.IntervalYearMonthBuilder<TNull>;
-    [Type.Map]: builders.MapBuilder<any, TNull>;
+    [Type.Map]: builders.MapBuilder<any, any, TNull>;
     [Type.List]: builders.ListBuilder<any, TNull>;
     [Type.Struct]: builders.StructBuilder<any, TNull>;
     [Type.Dictionary]: builders.DictionaryBuilder<any, TNull>;
@@ -312,7 +312,7 @@ declare type DataTypeToBuilder<T extends DataType = any, TNull = any> = {
     [Type.Interval]: T extends type.Interval ? builders.IntervalBuilder<T, TNull> : builders.Builder<any, TNull>;
     [Type.IntervalDayTime]: T extends type.IntervalDayTime ? builders.IntervalDayTimeBuilder<TNull> : builders.Builder<any, TNull>;
     [Type.IntervalYearMonth]: T extends type.IntervalYearMonth ? builders.IntervalYearMonthBuilder<TNull> : builders.Builder<any, TNull>;
-    [Type.Map]: T extends type.Map_ ? builders.MapBuilder<T['dataTypes'], TNull> : builders.Builder<any, TNull>;
+    [Type.Map]: T extends type.Map_ ? builders.MapBuilder<T['keyType'], T['valueType'], TNull> : builders.Builder<any, TNull>;
     [Type.List]: T extends type.List ? builders.ListBuilder<T['valueType'], TNull> : builders.Builder<any, TNull>;
     [Type.Struct]: T extends type.Struct ? builders.StructBuilder<T['dataTypes'], TNull> : builders.Builder<any, TNull>;
     [Type.Dictionary]: T extends type.Dictionary ? builders.DictionaryBuilder<T, TNull> : builders.Builder<any, TNull>;

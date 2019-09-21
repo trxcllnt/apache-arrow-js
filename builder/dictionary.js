@@ -22,9 +22,8 @@ const builder_1 = require("../builder");
 class DictionaryBuilder extends builder_1.Builder {
     constructor({ 'type': type, 'nullValues': nulls, 'dictionaryHashFunction': hashFn }) {
         super({ type: new type_1.Dictionary(type.dictionary, type.indices, type.id, type.isOrdered) });
-        this._dictionary = null;
         this._nulls = null;
-        this._dictionariesOffset = 0;
+        this._dictionaryOffset = 0;
         this._keysToIndices = Object.create(null);
         this.indices = builder_1.Builder.new({ 'type': this.type.indices, 'nullValues': nulls });
         this.dictionary = builder_1.Builder.new({ 'type': this.type.dictionary, 'nullValues': null });
@@ -50,7 +49,7 @@ class DictionaryBuilder extends builder_1.Builder {
         let key = this.valueToKey(value);
         let idx = keysToIndices[key];
         if (idx === undefined) {
-            keysToIndices[key] = idx = this._dictionariesOffset + this.dictionary.append(value).length - 1;
+            keysToIndices[key] = idx = this._dictionaryOffset + this.dictionary.append(value).length - 1;
         }
         return this.indices.setValue(index, idx);
     }
@@ -60,7 +59,7 @@ class DictionaryBuilder extends builder_1.Builder {
         const curr = this.dictionary.toVector();
         const data = this.indices.flush().clone(type);
         data.dictionary = prev ? prev.concat(curr) : curr;
-        this.finished || (this._dictionariesOffset += curr.length);
+        this.finished || (this._dictionaryOffset += curr.length);
         this._dictionary = data.dictionary;
         this.clear();
         return data;
@@ -68,6 +67,8 @@ class DictionaryBuilder extends builder_1.Builder {
     finish() {
         this.indices.finish();
         this.dictionary.finish();
+        this._dictionaryOffset = 0;
+        this._keysToIndices = Object.create(null);
         return super.finish();
     }
     clear() {
@@ -76,7 +77,7 @@ class DictionaryBuilder extends builder_1.Builder {
         return super.clear();
     }
     valueToKey(val) {
-        return (typeof val === 'string' ? val : `${val}`);
+        return typeof val === 'string' ? val : `${val}`;
     }
 }
 exports.DictionaryBuilder = DictionaryBuilder;

@@ -19,7 +19,7 @@ import { BufferType } from './enum';
 import { Data } from './data';
 import { createIsValidFunction } from './builder/valid';
 import { BitmapBufferBuilder, DataBufferBuilder, OffsetsBufferBuilder } from './builder/buffer';
-import { strideForType, } from './type';
+import { strideForType } from './type';
 /**
  * An abstract base class for types that construct Arrow Vectors from arbitrary JavaScript values.
  *

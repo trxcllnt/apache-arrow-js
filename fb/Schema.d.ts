@@ -97,7 +97,10 @@ export declare namespace org.apache.arrow.flatbuf {
         FixedSizeBinary = 15,
         FixedSizeList = 16,
         Map = 17,
-        Duration = 18
+        Duration = 18,
+        LargeBinary = 19,
+        LargeUtf8 = 20,
+        LargeList = 21
     }
 }
 /**
@@ -134,12 +137,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsNull(bb: flatbuffers.ByteBuffer, obj?: Null): Null;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Null= obj
-         * @returns Null
-         */
-        static getSizePrefixedRootAsNull(bb: flatbuffers.ByteBuffer, obj?: Null): Null;
-        /**
          * @param flatbuffers.Builder builder
          */
         static startNull(builder: flatbuffers.Builder): void;
@@ -175,12 +172,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsStruct_(bb: flatbuffers.ByteBuffer, obj?: Struct_): Struct_;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Struct_= obj
-         * @returns Struct_
-         */
-        static getSizePrefixedRootAsStruct_(bb: flatbuffers.ByteBuffer, obj?: Struct_): Struct_;
-        /**
          * @param flatbuffers.Builder builder
          */
         static startStruct_(builder: flatbuffers.Builder): void;
@@ -212,12 +203,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsList(bb: flatbuffers.ByteBuffer, obj?: List): List;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param List= obj
-         * @returns List
-         */
-        static getSizePrefixedRootAsList(bb: flatbuffers.ByteBuffer, obj?: List): List;
-        /**
          * @param flatbuffers.Builder builder
          */
         static startList(builder: flatbuffers.Builder): void;
@@ -227,6 +212,40 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static endList(builder: flatbuffers.Builder): flatbuffers.Offset;
         static createList(builder: flatbuffers.Builder): flatbuffers.Offset;
+    }
+}
+/**
+ * Same as List, but with 64-bit offsets, allowing to represent
+ * extremely large data values.
+ *
+ * @constructor
+ */
+export declare namespace org.apache.arrow.flatbuf {
+    class LargeList {
+        bb: flatbuffers.ByteBuffer | null;
+        bb_pos: number;
+        /**
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns LargeList
+         */
+        __init(i: number, bb: flatbuffers.ByteBuffer): LargeList;
+        /**
+         * @param flatbuffers.ByteBuffer bb
+         * @param LargeList= obj
+         * @returns LargeList
+         */
+        static getRootAsLargeList(bb: flatbuffers.ByteBuffer, obj?: LargeList): LargeList;
+        /**
+         * @param flatbuffers.Builder builder
+         */
+        static startLargeList(builder: flatbuffers.Builder): void;
+        /**
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
+         */
+        static endLargeList(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createLargeList(builder: flatbuffers.Builder): flatbuffers.Offset;
     }
 }
 /**
@@ -248,12 +267,6 @@ export declare namespace org.apache.arrow.flatbuf {
          * @returns FixedSizeList
          */
         static getRootAsFixedSizeList(bb: flatbuffers.ByteBuffer, obj?: FixedSizeList): FixedSizeList;
-        /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param FixedSizeList= obj
-         * @returns FixedSizeList
-         */
-        static getSizePrefixedRootAsFixedSizeList(bb: flatbuffers.ByteBuffer, obj?: FixedSizeList): FixedSizeList;
         /**
          * Number of list items per value
          *
@@ -322,12 +335,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsMap(bb: flatbuffers.ByteBuffer, obj?: Map): Map;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Map= obj
-         * @returns Map
-         */
-        static getSizePrefixedRootAsMap(bb: flatbuffers.ByteBuffer, obj?: Map): Map;
-        /**
          * Set to true if the keys within each value are sorted
          *
          * @returns boolean
@@ -374,12 +381,6 @@ export declare namespace org.apache.arrow.flatbuf {
          * @returns Union
          */
         static getRootAsUnion(bb: flatbuffers.ByteBuffer, obj?: Union): Union;
-        /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Union= obj
-         * @returns Union
-         */
-        static getSizePrefixedRootAsUnion(bb: flatbuffers.ByteBuffer, obj?: Union): Union;
         /**
          * @returns org.apache.arrow.flatbuf.UnionMode
          */
@@ -450,12 +451,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsInt(bb: flatbuffers.ByteBuffer, obj?: Int): Int;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Int= obj
-         * @returns Int
-         */
-        static getSizePrefixedRootAsInt(bb: flatbuffers.ByteBuffer, obj?: Int): Int;
-        /**
          * @returns number
          */
         bitWidth(): number;
@@ -505,12 +500,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsFloatingPoint(bb: flatbuffers.ByteBuffer, obj?: FloatingPoint): FloatingPoint;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param FloatingPoint= obj
-         * @returns FloatingPoint
-         */
-        static getSizePrefixedRootAsFloatingPoint(bb: flatbuffers.ByteBuffer, obj?: FloatingPoint): FloatingPoint;
-        /**
          * @returns org.apache.arrow.flatbuf.Precision
          */
         precision(): org.apache.arrow.flatbuf.Precision;
@@ -553,12 +542,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsUtf8(bb: flatbuffers.ByteBuffer, obj?: Utf8): Utf8;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Utf8= obj
-         * @returns Utf8
-         */
-        static getSizePrefixedRootAsUtf8(bb: flatbuffers.ByteBuffer, obj?: Utf8): Utf8;
-        /**
          * @param flatbuffers.Builder builder
          */
         static startUtf8(builder: flatbuffers.Builder): void;
@@ -571,6 +554,8 @@ export declare namespace org.apache.arrow.flatbuf {
     }
 }
 /**
+ * Opaque binary data
+ *
  * @constructor
  */
 export declare namespace org.apache.arrow.flatbuf {
@@ -590,12 +575,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsBinary(bb: flatbuffers.ByteBuffer, obj?: Binary): Binary;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Binary= obj
-         * @returns Binary
-         */
-        static getSizePrefixedRootAsBinary(bb: flatbuffers.ByteBuffer, obj?: Binary): Binary;
-        /**
          * @param flatbuffers.Builder builder
          */
         static startBinary(builder: flatbuffers.Builder): void;
@@ -605,6 +584,74 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static endBinary(builder: flatbuffers.Builder): flatbuffers.Offset;
         static createBinary(builder: flatbuffers.Builder): flatbuffers.Offset;
+    }
+}
+/**
+ * Same as Utf8, but with 64-bit offsets, allowing to represent
+ * extremely large data values.
+ *
+ * @constructor
+ */
+export declare namespace org.apache.arrow.flatbuf {
+    class LargeUtf8 {
+        bb: flatbuffers.ByteBuffer | null;
+        bb_pos: number;
+        /**
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns LargeUtf8
+         */
+        __init(i: number, bb: flatbuffers.ByteBuffer): LargeUtf8;
+        /**
+         * @param flatbuffers.ByteBuffer bb
+         * @param LargeUtf8= obj
+         * @returns LargeUtf8
+         */
+        static getRootAsLargeUtf8(bb: flatbuffers.ByteBuffer, obj?: LargeUtf8): LargeUtf8;
+        /**
+         * @param flatbuffers.Builder builder
+         */
+        static startLargeUtf8(builder: flatbuffers.Builder): void;
+        /**
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
+         */
+        static endLargeUtf8(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createLargeUtf8(builder: flatbuffers.Builder): flatbuffers.Offset;
+    }
+}
+/**
+ * Same as Binary, but with 64-bit offsets, allowing to represent
+ * extremely large data values.
+ *
+ * @constructor
+ */
+export declare namespace org.apache.arrow.flatbuf {
+    class LargeBinary {
+        bb: flatbuffers.ByteBuffer | null;
+        bb_pos: number;
+        /**
+         * @param number i
+         * @param flatbuffers.ByteBuffer bb
+         * @returns LargeBinary
+         */
+        __init(i: number, bb: flatbuffers.ByteBuffer): LargeBinary;
+        /**
+         * @param flatbuffers.ByteBuffer bb
+         * @param LargeBinary= obj
+         * @returns LargeBinary
+         */
+        static getRootAsLargeBinary(bb: flatbuffers.ByteBuffer, obj?: LargeBinary): LargeBinary;
+        /**
+         * @param flatbuffers.Builder builder
+         */
+        static startLargeBinary(builder: flatbuffers.Builder): void;
+        /**
+         * @param flatbuffers.Builder builder
+         * @returns flatbuffers.Offset
+         */
+        static endLargeBinary(builder: flatbuffers.Builder): flatbuffers.Offset;
+        static createLargeBinary(builder: flatbuffers.Builder): flatbuffers.Offset;
     }
 }
 /**
@@ -626,12 +673,6 @@ export declare namespace org.apache.arrow.flatbuf {
          * @returns FixedSizeBinary
          */
         static getRootAsFixedSizeBinary(bb: flatbuffers.ByteBuffer, obj?: FixedSizeBinary): FixedSizeBinary;
-        /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param FixedSizeBinary= obj
-         * @returns FixedSizeBinary
-         */
-        static getSizePrefixedRootAsFixedSizeBinary(bb: flatbuffers.ByteBuffer, obj?: FixedSizeBinary): FixedSizeBinary;
         /**
          * Number of bytes per value
          *
@@ -675,12 +716,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsBool(bb: flatbuffers.ByteBuffer, obj?: Bool): Bool;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Bool= obj
-         * @returns Bool
-         */
-        static getSizePrefixedRootAsBool(bb: flatbuffers.ByteBuffer, obj?: Bool): Bool;
-        /**
          * @param flatbuffers.Builder builder
          */
         static startBool(builder: flatbuffers.Builder): void;
@@ -711,12 +746,6 @@ export declare namespace org.apache.arrow.flatbuf {
          * @returns Decimal
          */
         static getRootAsDecimal(bb: flatbuffers.ByteBuffer, obj?: Decimal): Decimal;
-        /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Decimal= obj
-         * @returns Decimal
-         */
-        static getSizePrefixedRootAsDecimal(bb: flatbuffers.ByteBuffer, obj?: Decimal): Decimal;
         /**
          * Total number of decimal digits
          *
@@ -778,12 +807,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsDate(bb: flatbuffers.ByteBuffer, obj?: Date): Date;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Date= obj
-         * @returns Date
-         */
-        static getSizePrefixedRootAsDate(bb: flatbuffers.ByteBuffer, obj?: Date): Date;
-        /**
          * @returns org.apache.arrow.flatbuf.DateUnit
          */
         unit(): org.apache.arrow.flatbuf.DateUnit;
@@ -827,12 +850,6 @@ export declare namespace org.apache.arrow.flatbuf {
          * @returns Time
          */
         static getRootAsTime(bb: flatbuffers.ByteBuffer, obj?: Time): Time;
-        /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Time= obj
-         * @returns Time
-         */
-        static getSizePrefixedRootAsTime(bb: flatbuffers.ByteBuffer, obj?: Time): Time;
         /**
          * @returns org.apache.arrow.flatbuf.TimeUnit
          */
@@ -889,12 +906,6 @@ export declare namespace org.apache.arrow.flatbuf {
          * @returns Timestamp
          */
         static getRootAsTimestamp(bb: flatbuffers.ByteBuffer, obj?: Timestamp): Timestamp;
-        /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Timestamp= obj
-         * @returns Timestamp
-         */
-        static getSizePrefixedRootAsTimestamp(bb: flatbuffers.ByteBuffer, obj?: Timestamp): Timestamp;
         /**
          * @returns org.apache.arrow.flatbuf.TimeUnit
          */
@@ -968,12 +979,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsInterval(bb: flatbuffers.ByteBuffer, obj?: Interval): Interval;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Interval= obj
-         * @returns Interval
-         */
-        static getSizePrefixedRootAsInterval(bb: flatbuffers.ByteBuffer, obj?: Interval): Interval;
-        /**
          * @returns org.apache.arrow.flatbuf.IntervalUnit
          */
         unit(): org.apache.arrow.flatbuf.IntervalUnit;
@@ -1013,12 +1018,6 @@ export declare namespace org.apache.arrow.flatbuf {
          * @returns Duration
          */
         static getRootAsDuration(bb: flatbuffers.ByteBuffer, obj?: Duration): Duration;
-        /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Duration= obj
-         * @returns Duration
-         */
-        static getSizePrefixedRootAsDuration(bb: flatbuffers.ByteBuffer, obj?: Duration): Duration;
         /**
          * @returns org.apache.arrow.flatbuf.TimeUnit
          */
@@ -1063,12 +1062,6 @@ export declare namespace org.apache.arrow.flatbuf {
          * @returns KeyValue
          */
         static getRootAsKeyValue(bb: flatbuffers.ByteBuffer, obj?: KeyValue): KeyValue;
-        /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param KeyValue= obj
-         * @returns KeyValue
-         */
-        static getSizePrefixedRootAsKeyValue(bb: flatbuffers.ByteBuffer, obj?: KeyValue): KeyValue;
         /**
          * @param flatbuffers.Encoding= optionalEncoding
          * @returns string|Uint8Array|null
@@ -1125,12 +1118,6 @@ export declare namespace org.apache.arrow.flatbuf {
          * @returns DictionaryEncoding
          */
         static getRootAsDictionaryEncoding(bb: flatbuffers.ByteBuffer, obj?: DictionaryEncoding): DictionaryEncoding;
-        /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param DictionaryEncoding= obj
-         * @returns DictionaryEncoding
-         */
-        static getSizePrefixedRootAsDictionaryEncoding(bb: flatbuffers.ByteBuffer, obj?: DictionaryEncoding): DictionaryEncoding;
         /**
          * The known dictionary id in the application where this data is used. In
          * the file or streaming formats, the dictionary ids are found in the
@@ -1206,12 +1193,6 @@ export declare namespace org.apache.arrow.flatbuf {
          * @returns Field
          */
         static getRootAsField(bb: flatbuffers.ByteBuffer, obj?: Field): Field;
-        /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Field= obj
-         * @returns Field
-         */
-        static getSizePrefixedRootAsField(bb: flatbuffers.ByteBuffer, obj?: Field): Field;
         /**
          * Name is not required, in i.e. a List
          *
@@ -1400,12 +1381,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsSchema(bb: flatbuffers.ByteBuffer, obj?: Schema): Schema;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Schema= obj
-         * @returns Schema
-         */
-        static getSizePrefixedRootAsSchema(bb: flatbuffers.ByteBuffer, obj?: Schema): Schema;
-        /**
          * endianness of the buffer
          * it is Little Endian by default
          * if endianness doesn't match the underlying system then the vectors need to be converted
@@ -1484,11 +1459,6 @@ export declare namespace org.apache.arrow.flatbuf {
          * @param flatbuffers.Offset offset
          */
         static finishSchemaBuffer(builder: flatbuffers.Builder, offset: flatbuffers.Offset): void;
-        /**
-         * @param flatbuffers.Builder builder
-         * @param flatbuffers.Offset offset
-         */
-        static finishSizePrefixedSchemaBuffer(builder: flatbuffers.Builder, offset: flatbuffers.Offset): void;
         static createSchema(builder: flatbuffers.Builder, endianness: org.apache.arrow.flatbuf.Endianness, fieldsOffset: flatbuffers.Offset, customMetadataOffset: flatbuffers.Offset): flatbuffers.Offset;
     }
 }

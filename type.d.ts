@@ -16,11 +16,17 @@ export declare type IsSigned = {
 /** @ignore */
 export declare type RowLike<T extends {
     [key: string]: DataType;
-}> = (Iterable<T[keyof T]['TValue'] | null>) & {
+}> = (Iterable<[string, T[keyof T]['TValue'] | null]>) & {
     [P in keyof T]: T[P]['TValue'] | null;
 } & {
     get<K extends keyof T>(key: K): T[K]['TValue'] | null;
+} & {
+    set<K extends keyof T>(key: K, val: T[K]['TValue'] | null): void;
 };
+/** @ignore */
+export declare type MapLike<K extends DataType = any, V extends DataType = any> = {
+    [P in K['TValue']]: V['TValue'] | null;
+} & (Map<K['TValue'], V['TValue'] | null>);
 export interface DataType<TType extends Type = Type, TChildren extends {
     [key: string]: DataType;
 } = any> {
@@ -525,21 +531,28 @@ export declare class FixedSizeList<T extends DataType = any> extends DataType<Ty
     protected static [Symbol.toStringTag]: string;
 }
 /** @ignore */
-export interface Map_<T extends {
-    [key: string]: DataType;
-} = any> extends DataType<Type.Map> {
-    TArray: IterableArrayLike<RowLike<T>>;
-    TValue: RowLike<T>;
-    dataTypes: T;
+export interface Map_<TKey extends DataType = any, TValue extends DataType = any> extends DataType<Type.Map> {
+    TArray: IterableArrayLike<Map<TKey['TValue'], TValue['TValue'] | null>>;
+    TChild: Struct<{
+        key: TKey;
+        value: TValue;
+    }>;
+    TValue: MapLike<TKey, TValue>;
 }
 /** @ignore */
-export declare class Map_<T extends {
-    [key: string]: DataType;
-} = any> extends DataType<Type.Map, T> {
-    readonly children: Field<T[keyof T]>[];
+export declare class Map_<TKey extends DataType = any, TValue extends DataType = any> extends DataType<Type.Map> {
+    constructor(child: Field<Struct<{
+        key: TKey;
+        value: TValue;
+    }>>, keysSorted?: boolean);
     readonly keysSorted: boolean;
-    constructor(children: Field<T[keyof T]>[], keysSorted?: boolean);
+    readonly children: Field<Struct<{
+        key: TKey;
+        value: TValue;
+    }>>[];
     readonly typeId: Type.Map;
+    readonly keyType: TKey;
+    readonly valueType: TValue;
     toString(): string;
     protected static [Symbol.toStringTag]: string;
 }

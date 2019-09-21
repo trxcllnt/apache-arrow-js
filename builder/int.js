@@ -18,9 +18,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const bn_1 = require("../util/bn");
 const buffer_1 = require("./buffer");
-const builder_1 = require("../builder");
 const compat_1 = require("../util/compat");
-const compat_2 = require("../util/compat");
+const builder_1 = require("../builder");
 /** @ignore */
 class IntBuilder extends builder_1.FixedWidthBuilder {
     setValue(index, value) {
@@ -47,9 +46,7 @@ class Int64Builder extends IntBuilder {
             options['nullValues'] = options['nullValues'].map(toBigInt);
         }
         super(options);
-        if (compat_1.BigInt64ArrayAvailable) {
-            this._values = new buffer_1.WideBufferBuilder(new compat_1.BigInt64Array(0), 2);
-        }
+        this._values = new buffer_1.WideBufferBuilder(new Int32Array(0), 2);
     }
     get values64() { return this._values.buffer64; }
     isValid(value) { return super.isValid(toBigInt(value)); }
@@ -74,9 +71,7 @@ class Uint64Builder extends IntBuilder {
             options['nullValues'] = options['nullValues'].map(toBigInt);
         }
         super(options);
-        if (compat_2.BigUint64ArrayAvailable) {
-            this._values = new buffer_1.WideBufferBuilder(new compat_2.BigUint64Array(0), 2);
-        }
+        this._values = new buffer_1.WideBufferBuilder(new Uint32Array(0), 2);
     }
     get values64() { return this._values.buffer64; }
     isValid(value) { return super.isValid(toBigInt(value)); }

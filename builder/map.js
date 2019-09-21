@@ -17,15 +17,41 @@
 // under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
 const schema_1 = require("../schema");
-const builder_1 = require("../builder");
 const type_1 = require("../type");
+const builder_1 = require("../builder");
 /** @ignore */
-class MapBuilder extends builder_1.Builder {
+class MapBuilder extends builder_1.VariableWidthBuilder {
+    set(index, value) {
+        return super.set(index, value);
+    }
+    setValue(index, value) {
+        value = value instanceof Map ? value : new Map(Object.entries(value));
+        const pending = this._pending || (this._pending = new Map());
+        const current = pending.get(index);
+        current && (this._pendingLength -= current.size);
+        this._pendingLength += value.size;
+        pending.set(index, value);
+    }
     addChild(child, name = `${this.numChildren}`) {
-        const { children, keysSorted } = this.type;
-        const childIndex = this.children.push(child);
-        this.type = new type_1.Map_([...children, new schema_1.Field(name, child.type, true)], keysSorted);
-        return childIndex;
+        if (this.numChildren > 0) {
+            throw new Error('ListBuilder can only have one child.');
+        }
+        this.children[this.numChildren] = child;
+        this.type = new type_1.Map_(new schema_1.Field(name, child.type, true), this.type.keysSorted);
+        return this.numChildren - 1;
+    }
+    _flushPending(pending) {
+        const offsets = this._offsets;
+        const setValue = this._setValue;
+        pending.forEach((value, index) => {
+            if (value === undefined) {
+                offsets.set(index, 0);
+            }
+            else {
+                offsets.set(index, value.size);
+                setValue(this, index, value);
+            }
+        });
     }
 }
 exports.MapBuilder = MapBuilder;

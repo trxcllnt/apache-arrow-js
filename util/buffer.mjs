@@ -118,31 +118,6 @@ export function toArrayBufferView(ArrayBufferViewCtor, input) {
 /** @ignore */ export const toFloat64Array = (input) => toArrayBufferView(Float64Array, input);
 /** @ignore */ export const toUint8ClampedArray = (input) => toArrayBufferView(Uint8ClampedArray, input);
 /** @ignore */
-export const toFloat16Array = (input) => {
-    let floats = null;
-    if (ArrayBuffer.isView(input)) {
-        switch (input.constructor) {
-            case Float32Array:
-                floats = input;
-                break;
-            case Float64Array:
-                floats = input;
-                break;
-        }
-    }
-    else if (isIterable(input)) {
-        floats = toFloat64Array(input);
-    }
-    if (floats) {
-        const u16s = new Uint16Array(floats.length);
-        for (let i = -1, n = u16s.length; ++i < n;) {
-            u16s[i] = (floats[i] * 32767) + 32767;
-        }
-        return u16s;
-    }
-    return toUint16Array(input);
-};
-/** @ignore */
 const pump = (iterator) => { iterator.next(); return iterator; };
 /** @ignore */
 export function* toArrayBufferViewIterator(ArrayCtor, source) {

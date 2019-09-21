@@ -19,6 +19,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bn_1 = require("../util/bn");
 const visitor_1 = require("../visitor");
 const utf8_1 = require("../util/utf8");
+const math_1 = require("../util/math");
 const enum_1 = require("../enum");
 /** @ignore */
 class GetVisitor extends visitor_1.Visitor {
@@ -51,7 +52,7 @@ const getDateMillisecond = ({ values }, index) => epochMillisecondsLongToDate(va
 /** @ignore */
 const getNumeric = ({ stride, values }, index) => values[stride * index];
 /** @ignore */
-const getFloat16 = ({ stride, values }, index) => (values[stride * index] - 32767) / 32767;
+const getFloat16 = ({ stride, values }, index) => math_1.uint16ToFloat64(values[stride * index]);
 /** @ignore */
 const getBigInts = ({ stride, values, type }, index) => bn_1.BN.new(values.subarray(stride * index, stride * (index + 1)), type.isSigned);
 /** @ignore */
@@ -122,8 +123,12 @@ const getList = (vector, index) => {
     return child.slice(valueOffsets[index * stride], valueOffsets[(index * stride) + 1]);
 };
 /** @ignore */
-const getNested = (vector, index) => {
-    return vector.rowProxy.bind(index);
+const getMap = (vector, index) => {
+    return vector.bind(index);
+};
+/** @ignore */
+const getStruct = (vector, index) => {
+    return vector.bind(index);
 };
 /* istanbul ignore next */
 /** @ignore */
@@ -201,7 +206,7 @@ GetVisitor.prototype.visitTimeMicrosecond = getTimeMicrosecond;
 GetVisitor.prototype.visitTimeNanosecond = getTimeNanosecond;
 GetVisitor.prototype.visitDecimal = getDecimal;
 GetVisitor.prototype.visitList = getList;
-GetVisitor.prototype.visitStruct = getNested;
+GetVisitor.prototype.visitStruct = getStruct;
 GetVisitor.prototype.visitUnion = getUnion;
 GetVisitor.prototype.visitDenseUnion = getDenseUnion;
 GetVisitor.prototype.visitSparseUnion = getSparseUnion;
@@ -210,7 +215,7 @@ GetVisitor.prototype.visitInterval = getInterval;
 GetVisitor.prototype.visitIntervalDayTime = getIntervalDayTime;
 GetVisitor.prototype.visitIntervalYearMonth = getIntervalYearMonth;
 GetVisitor.prototype.visitFixedSizeList = getFixedSizeList;
-GetVisitor.prototype.visitMap = getNested;
+GetVisitor.prototype.visitMap = getMap;
 /** @ignore */
 exports.instance = new GetVisitor();
 

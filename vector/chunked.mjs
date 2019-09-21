@@ -231,9 +231,9 @@ const typedSet = (src, dst, offset) => {
 };
 /** @ignore */
 const arraySet = (src, dst, offset) => {
-    let idx = offset - 1;
+    let idx = offset;
     for (let i = -1, n = src.length; ++i < n;) {
-        dst[++idx] = src[i];
+        dst[idx++] = src[i];
     }
     return idx;
 };

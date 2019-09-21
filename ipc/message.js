@@ -40,6 +40,13 @@ class MessageReader {
         if ((r = this.readMetadataLength()).done) {
             return interfaces_1.ITERATOR_DONE;
         }
+        // ARROW-6313: If the first 4 bytes are continuation indicator (-1), read
+        // the next 4 for the 32-bit metadata length. Otherwise, assume this is a
+        // pre-v0.15 message, where the first 4 bytes are the metadata length.
+        if ((r.value === -1) &&
+            (r = this.readMetadataLength()).done) {
+            return interfaces_1.ITERATOR_DONE;
+        }
         if ((r = this.readMetadata(r.value)).done) {
             return interfaces_1.ITERATOR_DONE;
         }
@@ -82,8 +89,8 @@ class MessageReader {
     readMetadataLength() {
         const buf = this.source.read(exports.PADDING);
         const bb = buf && new ByteBuffer(buf);
-        const len = +(bb && bb.readInt32(0));
-        return { done: len <= 0, value: len };
+        const len = bb && bb.readInt32(0) || 0;
+        return { done: len === 0, value: len };
     }
     readMetadata(metadataLength) {
         const buf = this.source.read(metadataLength);
@@ -109,6 +116,13 @@ class AsyncMessageReader {
     async next() {
         let r;
         if ((r = await this.readMetadataLength()).done) {
+            return interfaces_1.ITERATOR_DONE;
+        }
+        // ARROW-6313: If the first 4 bytes are continuation indicator (-1), read
+        // the next 4 for the 32-bit metadata length. Otherwise, assume this is a
+        // pre-v0.15 message, where the first 4 bytes are the metadata length.
+        if ((r.value === -1) &&
+            (r = await this.readMetadataLength()).done) {
             return interfaces_1.ITERATOR_DONE;
         }
         if ((r = await this.readMetadata(r.value)).done) {
@@ -153,8 +167,8 @@ class AsyncMessageReader {
     async readMetadataLength() {
         const buf = await this.source.read(exports.PADDING);
         const bb = buf && new ByteBuffer(buf);
-        const len = +(bb && bb.readInt32(0));
-        return { done: len <= 0, value: len };
+        const len = bb && bb.readInt32(0) || 0;
+        return { done: len === 0, value: len };
     }
     async readMetadata(metadataLength) {
         const buf = await this.source.read(metadataLength);

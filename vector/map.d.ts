@@ -1,11 +1,10 @@
 import { BaseVector } from './base';
-import { RowProxyGenerator } from './row';
-import { DataType, Map_ } from '../type';
+import { DataType, Map_, Struct } from '../type';
 /** @ignore */
-export declare class MapVector<T extends {
-    [key: string]: DataType;
-} = any> extends BaseVector<Map_<T>> {
-    asStruct(): import("./struct").StructVector<T>;
-    private _rowProxy;
-    readonly rowProxy: RowProxyGenerator<T>;
+export declare class MapVector<K extends DataType = any, V extends DataType = any> extends BaseVector<Map_<K, V>> {
+    asList(): import("./list").ListVector<Struct<{
+        key: K;
+        value: V;
+    }>>;
+    bind(index: number): Map_<K, V>['TValue'];
 }

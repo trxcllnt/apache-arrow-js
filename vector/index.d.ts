@@ -1,4 +1,3 @@
-export { Row } from './row';
 export { Vector } from '../vector';
 export { BaseVector } from './base';
 export { BinaryVector } from './binary';
@@ -20,6 +19,7 @@ export { TimestampVector, TimestampSecondVector, TimestampMillisecondVector, Tim
 export { TimeVector, TimeSecondVector, TimeMillisecondVector, TimeMicrosecondVector, TimeNanosecondVector } from './time';
 export { UnionVector, DenseUnionVector, SparseUnionVector } from './union';
 export { Utf8Vector } from './utf8';
+export { MapRow, StructRow } from './row';
 import { Data } from '../data';
 import { Vector } from '../vector';
 import { DataType } from '../type';

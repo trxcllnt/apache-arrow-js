@@ -23,8 +23,6 @@ export declare function toArrayBufferView<T extends BigIntArray>(ArrayBufferView
 /** @ignore */ export declare const toFloat64Array: (input: ArrayBufferViewInput) => Float64Array;
 /** @ignore */ export declare const toUint8ClampedArray: (input: ArrayBufferViewInput) => Uint8ClampedArray;
 /** @ignore */
-export declare const toFloat16Array: (input: ArrayBufferViewInput) => Uint16Array;
-/** @ignore */
 declare type ArrayBufferViewIteratorInput = Iterable<ArrayBufferViewInput> | ArrayBufferViewInput;
 /** @ignore */
 export declare function toArrayBufferViewIterator<T extends TypedArray>(ArrayCtor: TypedArrayConstructor<T>, source: ArrayBufferViewIteratorInput): IterableIterator<T>;

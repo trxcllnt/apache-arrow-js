@@ -14,17 +14,20 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+import { MapRow } from './row';
 import { Vector } from '../vector';
 import { BaseVector } from './base';
-import { RowProxyGenerator } from './row';
-import { Struct } from '../type';
+import { List } from '../type';
 /** @ignore */
 export class MapVector extends BaseVector {
-    asStruct() {
-        return Vector.new(this.data.clone(new Struct(this.type.children)));
+    asList() {
+        const child = this.type.children[0];
+        return Vector.new(this.data.clone(new List(child)));
     }
-    get rowProxy() {
-        return this._rowProxy || (this._rowProxy = RowProxyGenerator.new(this, this.type.children || [], true));
+    bind(index) {
+        const child = this.getChildAt(0);
+        const { [index]: begin, [index + 1]: end } = this.valueOffsets;
+        return new MapRow(child.slice(begin, end));
     }
 }
 

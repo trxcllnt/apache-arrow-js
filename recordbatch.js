@@ -23,11 +23,11 @@ const visitor_1 = require("./visitor");
 const schema_1 = require("./schema");
 const compat_1 = require("./util/compat");
 const chunked_1 = require("./vector/chunked");
-const index_1 = require("./vector/index");
 const args_1 = require("./util/args");
 const type_1 = require("./type");
 const recordbatch_1 = require("./util/recordbatch");
-class RecordBatch extends index_1.MapVector {
+const index_1 = require("./vector/index");
+class RecordBatch extends index_1.StructVector {
     constructor(...args) {
         let data;
         let schema = args[0];
@@ -38,7 +38,7 @@ class RecordBatch extends index_1.MapVector {
         else {
             const fields = schema.fields;
             const [, length, childData] = args;
-            data = data_1.Data.Map(new type_1.Map_(fields), 0, length, 0, null, childData);
+            data = data_1.Data.Struct(new type_1.Struct(fields), 0, length, 0, null, childData);
         }
         super(data, children);
         this._schema = schema;
@@ -101,7 +101,7 @@ class DictionaryCollector extends visitor_1.Visitor {
         this.dictionaries = new Map();
     }
     static collect(batch) {
-        return new DictionaryCollector().visit(batch.data, new type_1.Map_(batch.schema.fields)).dictionaries;
+        return new DictionaryCollector().visit(batch.data, new type_1.Struct(batch.schema.fields)).dictionaries;
     }
     visit(data, type) {
         if (type_1.DataType.isDictionary(type)) {

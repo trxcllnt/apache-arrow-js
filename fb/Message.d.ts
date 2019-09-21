@@ -96,12 +96,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsRecordBatch(bb: flatbuffers.ByteBuffer, obj?: RecordBatch): RecordBatch;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param RecordBatch= obj
-         * @returns RecordBatch
-         */
-        static getSizePrefixedRootAsRecordBatch(bb: flatbuffers.ByteBuffer, obj?: RecordBatch): RecordBatch;
-        /**
          * number of records / rows. The arrays in the batch should all have this
          * length
          *
@@ -201,12 +195,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsDictionaryBatch(bb: flatbuffers.ByteBuffer, obj?: DictionaryBatch): DictionaryBatch;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param DictionaryBatch= obj
-         * @returns DictionaryBatch
-         */
-        static getSizePrefixedRootAsDictionaryBatch(bb: flatbuffers.ByteBuffer, obj?: DictionaryBatch): DictionaryBatch;
-        /**
          * @returns flatbuffers.Long
          */
         id(): flatbuffers.Long;
@@ -268,12 +256,6 @@ export declare namespace org.apache.arrow.flatbuf {
          * @returns Message
          */
         static getRootAsMessage(bb: flatbuffers.ByteBuffer, obj?: Message): Message;
-        /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Message= obj
-         * @returns Message
-         */
-        static getSizePrefixedRootAsMessage(bb: flatbuffers.ByteBuffer, obj?: Message): Message;
         /**
          * @returns org.apache.arrow.flatbuf.MetadataVersion
          */
@@ -351,11 +333,6 @@ export declare namespace org.apache.arrow.flatbuf {
          * @param flatbuffers.Offset offset
          */
         static finishMessageBuffer(builder: flatbuffers.Builder, offset: flatbuffers.Offset): void;
-        /**
-         * @param flatbuffers.Builder builder
-         * @param flatbuffers.Offset offset
-         */
-        static finishSizePrefixedMessageBuffer(builder: flatbuffers.Builder, offset: flatbuffers.Offset): void;
         static createMessage(builder: flatbuffers.Builder, version: NS7624605610262437867.org.apache.arrow.flatbuf.MetadataVersion, headerType: org.apache.arrow.flatbuf.MessageHeader, headerOffset: flatbuffers.Offset, bodyLength: flatbuffers.Long, customMetadataOffset: flatbuffers.Offset): flatbuffers.Offset;
     }
 }

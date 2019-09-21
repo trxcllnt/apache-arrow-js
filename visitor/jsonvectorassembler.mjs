@@ -38,13 +38,13 @@ export class JSONVectorAssembler extends Visitor {
         return {
             'name': name,
             'count': length,
-            'VALIDITY': nullCount <= 0
-                ? Array.from({ length }, () => 1)
-                : [...iterateBits(nullBitmap, offset, length, null, getBit)],
+            'VALIDITY': DataType.isNull(type) ? undefined
+                : nullCount <= 0 ? Array.from({ length }, () => 1)
+                    : [...iterateBits(nullBitmap, offset, length, null, getBit)],
             ...super.visit(Vector.new(data.clone(type, offset, length, 0, buffers)))
         };
     }
-    visitNull() { return { 'DATA': [] }; }
+    visitNull() { return {}; }
     visitBool({ values, offset, length }) {
         return { 'DATA': [...iterateBits(values, offset, length, null, getBool)] };
     }
@@ -115,6 +115,7 @@ export class JSONVectorAssembler extends Visitor {
     }
     visitMap(vector) {
         return {
+            'OFFSET': [...vector.valueOffsets],
             'children': vector.type.children.map((f, i) => this.visit(new Column(f, [vector.getChildAt(i)])))
         };
     }

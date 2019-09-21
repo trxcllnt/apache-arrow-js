@@ -19,6 +19,10 @@ import { Builder } from '../builder';
 export class NullBuilder extends Builder {
     // @ts-ignore
     setValue(index, value) { }
+    setValid(index, valid) {
+        this.length = Math.max(index + 1, this.length);
+        return valid;
+    }
 }
 
 //# sourceMappingURL=null.mjs.map

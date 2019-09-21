@@ -15,15 +15,41 @@
 // specific language governing permissions and limitations
 // under the License.
 import { Field } from '../schema';
-import { Builder } from '../builder';
 import { Map_ } from '../type';
+import { VariableWidthBuilder } from '../builder';
 /** @ignore */
-export class MapBuilder extends Builder {
+export class MapBuilder extends VariableWidthBuilder {
+    set(index, value) {
+        return super.set(index, value);
+    }
+    setValue(index, value) {
+        value = value instanceof Map ? value : new Map(Object.entries(value));
+        const pending = this._pending || (this._pending = new Map());
+        const current = pending.get(index);
+        current && (this._pendingLength -= current.size);
+        this._pendingLength += value.size;
+        pending.set(index, value);
+    }
     addChild(child, name = `${this.numChildren}`) {
-        const { children, keysSorted } = this.type;
-        const childIndex = this.children.push(child);
-        this.type = new Map_([...children, new Field(name, child.type, true)], keysSorted);
-        return childIndex;
+        if (this.numChildren > 0) {
+            throw new Error('ListBuilder can only have one child.');
+        }
+        this.children[this.numChildren] = child;
+        this.type = new Map_(new Field(name, child.type, true), this.type.keysSorted);
+        return this.numChildren - 1;
+    }
+    _flushPending(pending) {
+        const offsets = this._offsets;
+        const setValue = this._setValue;
+        pending.forEach((value, index) => {
+            if (value === undefined) {
+                offsets.set(index, 0);
+            }
+            else {
+                offsets.set(index, value.size);
+                setValue(this, index, value);
+            }
+        });
     }
 }
 

@@ -4,10 +4,9 @@ import { Schema, Field } from './schema';
 import { RecordBatch } from './recordbatch';
 import { DataFrame } from './compute/dataframe';
 import { RecordBatchReader } from './ipc/reader';
-import { DataType, RowLike, Struct, Map_ } from './type';
+import { DataType, RowLike, Struct } from './type';
 import { Clonable, Sliceable, Applicative } from './vector';
-import { Vector, Chunked } from './vector/index';
-import { VectorBuilderOptions, VectorBuilderOptionsAsync } from './vector/index';
+import { Vector, Chunked, VectorBuilderOptions, VectorBuilderOptionsAsync } from './vector/index';
 declare type VectorMap = {
     [key: string]: Vector;
 };
@@ -26,7 +25,7 @@ export interface Table<T extends {
     get(index: number): Struct<T>['TValue'];
     [Symbol.iterator](): IterableIterator<RowLike<T>>;
     slice(begin?: number, end?: number): Table<T>;
-    concat(...others: Vector<Map_<T>>[]): Table<T>;
+    concat(...others: Vector<Struct<T>>[]): Table<T>;
     clone(chunks?: RecordBatch<T>[], offsets?: Uint32Array): Table<T>;
     scan(next: import('./compute/dataframe').NextFunc, bind?: import('./compute/dataframe').BindFunc): void;
     countBy(name: import('./compute/predicate').Col | string): import('./compute/dataframe').CountByResult;
@@ -34,7 +33,7 @@ export interface Table<T extends {
 }
 export declare class Table<T extends {
     [key: string]: DataType;
-} = any> extends Chunked<Map_<T>> implements DataFrame<T>, Clonable<Table<T>>, Sliceable<Table<T>>, Applicative<Map_<T>, Table<T>> {
+} = any> extends Chunked<Struct<T>> implements DataFrame<T>, Clonable<Table<T>>, Sliceable<Table<T>>, Applicative<Struct<T>, Table<T>> {
     /** @nocollapse */
     static empty<T extends {
         [key: string]: DataType;
@@ -66,18 +65,14 @@ export declare class Table<T extends {
     } = any>(source: PromiseLike<RecordBatchReader<T>>): Promise<Table<T>>;
     static from<T extends {
         [key: string]: DataType;
-    } = any, TNull = any>(options: VectorBuilderOptions<Struct<T> | Map_<T>, TNull>): Table<T>;
+    } = any, TNull = any>(options: VectorBuilderOptions<Struct<T>, TNull>): Table<T>;
     static from<T extends {
         [key: string]: DataType;
-    } = any, TNull = any>(options: VectorBuilderOptionsAsync<Struct<T> | Map_<T>, TNull>): Promise<Table<T>>;
+    } = any, TNull = any>(options: VectorBuilderOptionsAsync<Struct<T>, TNull>): Promise<Table<T>>;
     /** @nocollapse */
     static fromAsync<T extends {
         [key: string]: DataType;
     } = any>(source: import('./ipc/reader').FromArgs): Promise<Table<T>>;
-    /** @nocollapse */
-    static fromMap<T extends {
-        [key: string]: DataType;
-    } = any>(vector: Vector<Map_<T>>): Table<T>;
     /** @nocollapse */
     static fromStruct<T extends {
         [key: string]: DataType;

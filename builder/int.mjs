@@ -16,9 +16,8 @@
 // under the License.
 import { bignumToBigInt } from '../util/bn';
 import { WideBufferBuilder } from './buffer';
+import { BigInt64Array } from '../util/compat';
 import { FixedWidthBuilder } from '../builder';
-import { BigInt64ArrayAvailable, BigInt64Array } from '../util/compat';
-import { BigUint64ArrayAvailable, BigUint64Array } from '../util/compat';
 /** @ignore */
 export class IntBuilder extends FixedWidthBuilder {
     setValue(index, value) {
@@ -41,9 +40,7 @@ export class Int64Builder extends IntBuilder {
             options['nullValues'] = options['nullValues'].map(toBigInt);
         }
         super(options);
-        if (BigInt64ArrayAvailable) {
-            this._values = new WideBufferBuilder(new BigInt64Array(0), 2);
-        }
+        this._values = new WideBufferBuilder(new Int32Array(0), 2);
     }
     get values64() { return this._values.buffer64; }
     isValid(value) { return super.isValid(toBigInt(value)); }
@@ -64,9 +61,7 @@ export class Uint64Builder extends IntBuilder {
             options['nullValues'] = options['nullValues'].map(toBigInt);
         }
         super(options);
-        if (BigUint64ArrayAvailable) {
-            this._values = new WideBufferBuilder(new BigUint64Array(0), 2);
-        }
+        this._values = new WideBufferBuilder(new Uint32Array(0), 2);
     }
     get values64() { return this._values.buffer64; }
     isValid(value) { return super.isValid(toBigInt(value)); }

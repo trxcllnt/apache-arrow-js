@@ -84,7 +84,6 @@ var schema_1 = require("./schema");
 exports.Schema = schema_1.Schema;
 exports.Field = schema_1.Field;
 var index_1 = require("./vector/index");
-exports.Row = index_1.Row;
 exports.Vector = index_1.Vector;
 exports.BaseVector = index_1.BaseVector;
 exports.BinaryVector = index_1.BinaryVector;
@@ -206,6 +205,7 @@ exports.CountByResult = dataframe_1.CountByResult;
 const util_bn_ = require("./util/bn");
 const util_int_ = require("./util/int");
 const util_bit_ = require("./util/bit");
+const util_math_ = require("./util/math");
 const util_buffer_ = require("./util/buffer");
 const util_vector_ = require("./util/vector");
 const predicate = require("./compute/predicate");
@@ -215,6 +215,7 @@ exports.util = {
     ...util_bn_,
     ...util_int_,
     ...util_bit_,
+    ...util_math_,
     ...util_buffer_,
     ...util_vector_
 };

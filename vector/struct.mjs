@@ -14,17 +14,16 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-import { Vector } from '../vector';
+import { StructRow } from './row';
 import { BaseVector } from './base';
-import { RowProxyGenerator } from './row';
-import { Map_ } from '../type';
+/** @ignore */ const kRowIndex = Symbol.for('rowIndex');
 /** @ignore */
 export class StructVector extends BaseVector {
-    asMap(keysSorted = false) {
-        return Vector.new(this.data.clone(new Map_(this.type.children, keysSorted)));
-    }
-    get rowProxy() {
-        return this._rowProxy || (this._rowProxy = RowProxyGenerator.new(this, this.type.children || [], false));
+    bind(index) {
+        const proto = this._row || (this._row = new StructRow(this));
+        const bound = Object.create(proto);
+        bound[kRowIndex] = index;
+        return bound;
     }
 }
 

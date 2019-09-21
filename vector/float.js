@@ -19,38 +19,42 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const data_1 = require("../data");
 const vector_1 = require("../vector");
 const base_1 = require("./base");
+const index_1 = require("./index");
 const type_1 = require("../type");
-const buffer_1 = require("../util/buffer");
 /** @ignore */
 class FloatVector extends base_1.BaseVector {
     /** @nocollapse */
-    static from(data) {
-        let type = null;
-        switch (this) {
-            case Float16Vector:
-                data = buffer_1.toFloat16Array(data);
-                break;
-            case Float32Vector:
-                data = buffer_1.toFloat32Array(data);
-                break;
-            case Float64Vector:
-                data = buffer_1.toFloat64Array(data);
-                break;
+    static from(input) {
+        let ArrowType = vectorTypeToDataType(this);
+        if ((input instanceof ArrayBuffer) || ArrayBuffer.isView(input)) {
+            let InputType = arrayTypeToDataType(input.constructor) || ArrowType;
+            // Special case, infer the Arrow DataType from the input if calling the base
+            // FloatVector.from with a TypedArray, e.g. `FloatVector.from(new Float32Array())`
+            if (ArrowType === null) {
+                ArrowType = InputType;
+            }
+            // If the DataType inferred from the Vector constructor matches the
+            // DataType inferred from the input arguments, return zero-copy view
+            if (ArrowType && ArrowType === InputType) {
+                let type = new ArrowType();
+                let length = input.byteLength / type.ArrayType.BYTES_PER_ELEMENT;
+                // If the ArrowType is Float16 but the input type isn't a Uint16Array,
+                // let the Float16Builder handle casting the input values to Uint16s.
+                if (!convertTo16Bit(ArrowType, input.constructor)) {
+                    return vector_1.Vector.new(data_1.Data.Float(type, 0, length, 0, null, input));
+                }
+            }
         }
-        switch (data.constructor) {
-            case Uint16Array:
-                type = new type_1.Float16();
-                break;
-            case Float32Array:
-                type = new type_1.Float32();
-                break;
-            case Float64Array:
-                type = new type_1.Float64();
-                break;
+        if (ArrowType) {
+            // If the DataType inferred from the Vector constructor is different than
+            // the DataType inferred from the input TypedArray, or if input isn't a
+            // TypedArray, use the Builders to construct the result Vector
+            return index_1.vectorFromValuesWithType(() => new ArrowType(), input);
         }
-        return type !== null
-            ? vector_1.Vector.new(data_1.Data.Float(type, 0, data.length, 0, null, data))
-            : (() => { throw new TypeError('Unrecognized FloatVector input'); })();
+        if ((input instanceof DataView) || (input instanceof ArrayBuffer)) {
+            throw new TypeError(`Cannot infer float type from instance of ${input.constructor.name}`);
+        }
+        throw new TypeError('Unrecognized FloatVector input');
     }
 }
 exports.FloatVector = FloatVector;
@@ -74,5 +78,26 @@ exports.Float32Vector = Float32Vector;
 class Float64Vector extends FloatVector {
 }
 exports.Float64Vector = Float64Vector;
+const convertTo16Bit = (typeCtor, dataCtor) => {
+    return (typeCtor === type_1.Float16) && (dataCtor !== Uint16Array);
+};
+/** @ignore */
+const arrayTypeToDataType = (ctor) => {
+    switch (ctor) {
+        case Uint16Array: return type_1.Float16;
+        case Float32Array: return type_1.Float32;
+        case Float64Array: return type_1.Float64;
+        default: return null;
+    }
+};
+/** @ignore */
+const vectorTypeToDataType = (ctor) => {
+    switch (ctor) {
+        case Float16Vector: return type_1.Float16;
+        case Float32Vector: return type_1.Float32;
+        case Float64Vector: return type_1.Float64;
+        default: return null;
+    }
+};
 
 //# sourceMappingURL=float.js.map

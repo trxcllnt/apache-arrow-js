@@ -37,7 +37,7 @@ export class VectorLoader extends Visitor {
     visit(node) {
         return super.visit(node instanceof Field ? node.type : node);
     }
-    visitNull(type, { length, nullCount } = this.nextFieldNode()) { return Data.Null(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.readData(type)); }
+    visitNull(type, { length, } = this.nextFieldNode()) { return Data.Null(type, 0, length); }
     visitBool(type, { length, nullCount } = this.nextFieldNode()) { return Data.Bool(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.readData(type)); }
     visitInt(type, { length, nullCount } = this.nextFieldNode()) { return Data.Int(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.readData(type)); }
     visitFloat(type, { length, nullCount } = this.nextFieldNode()) { return Data.Float(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.readData(type)); }
@@ -56,7 +56,7 @@ export class VectorLoader extends Visitor {
     visitDictionary(type, { length, nullCount } = this.nextFieldNode()) { return Data.Dictionary(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.readData(type.indices), this.readDictionary(type)); }
     visitInterval(type, { length, nullCount } = this.nextFieldNode()) { return Data.Interval(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.readData(type)); }
     visitFixedSizeList(type, { length, nullCount } = this.nextFieldNode()) { return Data.FixedSizeList(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.visit(type.children[0])); }
-    visitMap(type, { length, nullCount } = this.nextFieldNode()) { return Data.Map(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.visitMany(type.children)); }
+    visitMap(type, { length, nullCount } = this.nextFieldNode()) { return Data.Map(type, 0, length, nullCount, this.readNullBitmap(type, nullCount), this.readOffsets(type), this.visit(type.children[0])); }
     nextFieldNode() { return this.nodes[++this.nodesIndex]; }
     nextBufferRange() { return this.buffers[++this.buffersIndex]; }
     readNullBitmap(type, nullCount, buffer = this.nextBufferRange()) {

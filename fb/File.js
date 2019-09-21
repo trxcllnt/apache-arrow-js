@@ -41,14 +41,6 @@ var org;
                         return (obj || new Footer).__init(bb.readInt32(bb.position()) + bb.position(), bb);
                     }
                     /**
-                     * @param flatbuffers.ByteBuffer bb
-                     * @param Footer= obj
-                     * @returns Footer
-                     */
-                    static getSizePrefixedRootAsFooter(bb, obj) {
-                        return (obj || new Footer).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-                    }
-                    /**
                      * @returns org.apache.arrow.flatbuf.MetadataVersion
                      */
                     version() {
@@ -157,13 +149,6 @@ var org;
                      */
                     static finishFooterBuffer(builder, offset) {
                         builder.finish(offset);
-                    }
-                    /**
-                     * @param flatbuffers.Builder builder
-                     * @param flatbuffers.Offset offset
-                     */
-                    static finishSizePrefixedFooterBuffer(builder, offset) {
-                        builder.finish(offset, undefined);
                     }
                     static createFooter(builder, version, schemaOffset, dictionariesOffset, recordBatchesOffset) {
                         Footer.startFooter(builder);

@@ -44,7 +44,9 @@ class RecordBatchWriter extends interfaces_1.ReadableInterop {
         this._dictionaryBlocks = [];
         this._recordBatchBlocks = [];
         this._dictionaryDeltaOffsets = new Map();
-        this._autoDestroy = options && (typeof options.autoDestroy === 'boolean') ? options.autoDestroy : true;
+        compat_1.isObject(options) || (options = { autoDestroy: true, writeLegacyIpcFormat: false });
+        this._autoDestroy = (typeof options.autoDestroy === 'boolean') ? options.autoDestroy : true;
+        this._writeLegacyIpcFormat = (typeof options.writeLegacyIpcFormat === 'boolean') ? options.writeLegacyIpcFormat : false;
     }
     /** @nocollapse */
     // @ts-ignore
@@ -157,16 +159,21 @@ class RecordBatchWriter extends interfaces_1.ReadableInterop {
         const a = alignment - 1;
         const buffer = message_2.Message.encode(message);
         const flatbufferSize = buffer.byteLength;
-        const alignedSize = (flatbufferSize + 4 + a) & ~a;
-        const nPaddingBytes = alignedSize - flatbufferSize - 4;
+        const prefixSize = !this._writeLegacyIpcFormat ? 8 : 4;
+        const alignedSize = (flatbufferSize + prefixSize + a) & ~a;
+        const nPaddingBytes = alignedSize - flatbufferSize - prefixSize;
         if (message.headerType === enum_1.MessageHeader.RecordBatch) {
             this._recordBatchBlocks.push(new file_1.FileBlock(alignedSize, message.bodyLength, this._position));
         }
         else if (message.headerType === enum_1.MessageHeader.DictionaryBatch) {
             this._dictionaryBlocks.push(new file_1.FileBlock(alignedSize, message.bodyLength, this._position));
         }
+        // If not in legacy pre-0.15.0 mode, write the stream continuation indicator
+        if (!this._writeLegacyIpcFormat) {
+            this._write(Int32Array.of(-1));
+        }
         // Write the flatbuffer size prefix including padding
-        this._write(Int32Array.of(alignedSize - 4));
+        this._write(Int32Array.of(alignedSize - prefixSize));
         // Write the flatbuffer
         if (flatbufferSize > 0) {
             this._write(buffer);
@@ -189,7 +196,10 @@ class RecordBatchWriter extends interfaces_1.ReadableInterop {
     }
     // @ts-ignore
     _writeFooter(schema) {
-        return this._writePadding(4); // eos bytes
+        // eos bytes
+        return this._writeLegacyIpcFormat
+            ? this._write(Int32Array.of(0))
+            : this._write(Int32Array.of(-1, 0));
     }
     _writeMagic() {
         return this._write(message_1.MAGIC);
@@ -282,7 +292,8 @@ class RecordBatchFileWriter extends RecordBatchWriter {
     }
     _writeFooter(schema) {
         const buffer = file_1.Footer.encode(new file_1.Footer(schema, enum_1.MetadataVersion.V4, this._recordBatchBlocks, this._dictionaryBlocks));
-        return this
+        return super
+            ._writeFooter(schema) // EOS bytes for sequential readers
             ._write(buffer) // Write the flatbuffer
             ._write(Int32Array.of(buffer.byteLength)) // then the footer size suffix
             ._writeMagic(); // then the magic suffix
@@ -302,6 +313,8 @@ class RecordBatchJSONWriter extends RecordBatchWriter {
         return new RecordBatchJSONWriter().writeAll(input);
     }
     _writeMessage() { return this; }
+    // @ts-ignore
+    _writeFooter(schema) { return this; }
     _writeSchema(schema) {
         return this._write(`{\n  "schema": ${JSON.stringify({ fields: schema.fields.map(fieldToJSON) }, null, 2)}`);
     }

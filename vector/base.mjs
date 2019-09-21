@@ -67,7 +67,7 @@ export class BaseVector extends AbstractVector {
     }
     toJSON() { return [...this]; }
     _sliceInternal(self, begin, end) {
-        return self.clone(self.data.slice(begin, end - begin));
+        return self.clone(self.data.slice(begin, end - begin), null);
     }
     // @ts-ignore
     _bindDataAccessors(data) {

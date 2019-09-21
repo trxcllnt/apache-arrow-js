@@ -17,6 +17,7 @@
 import { BN } from '../util/bn';
 import { Visitor } from '../visitor';
 import { decodeUtf8 } from '../util/utf8';
+import { uint16ToFloat64 } from '../util/math';
 import { UnionMode, Precision, DateUnit, TimeUnit, IntervalUnit } from '../enum';
 /** @ignore */
 export class GetVisitor extends Visitor {
@@ -48,7 +49,7 @@ const getDateMillisecond = ({ values }, index) => epochMillisecondsLongToDate(va
 /** @ignore */
 const getNumeric = ({ stride, values }, index) => values[stride * index];
 /** @ignore */
-const getFloat16 = ({ stride, values }, index) => (values[stride * index] - 32767) / 32767;
+const getFloat16 = ({ stride, values }, index) => uint16ToFloat64(values[stride * index]);
 /** @ignore */
 const getBigInts = ({ stride, values, type }, index) => BN.new(values.subarray(stride * index, stride * (index + 1)), type.isSigned);
 /** @ignore */
@@ -119,8 +120,12 @@ const getList = (vector, index) => {
     return child.slice(valueOffsets[index * stride], valueOffsets[(index * stride) + 1]);
 };
 /** @ignore */
-const getNested = (vector, index) => {
-    return vector.rowProxy.bind(index);
+const getMap = (vector, index) => {
+    return vector.bind(index);
+};
+/** @ignore */
+const getStruct = (vector, index) => {
+    return vector.bind(index);
 };
 /* istanbul ignore next */
 /** @ignore */
@@ -198,7 +203,7 @@ GetVisitor.prototype.visitTimeMicrosecond = getTimeMicrosecond;
 GetVisitor.prototype.visitTimeNanosecond = getTimeNanosecond;
 GetVisitor.prototype.visitDecimal = getDecimal;
 GetVisitor.prototype.visitList = getList;
-GetVisitor.prototype.visitStruct = getNested;
+GetVisitor.prototype.visitStruct = getStruct;
 GetVisitor.prototype.visitUnion = getUnion;
 GetVisitor.prototype.visitDenseUnion = getDenseUnion;
 GetVisitor.prototype.visitSparseUnion = getSparseUnion;
@@ -207,7 +212,7 @@ GetVisitor.prototype.visitInterval = getInterval;
 GetVisitor.prototype.visitIntervalDayTime = getIntervalDayTime;
 GetVisitor.prototype.visitIntervalYearMonth = getIntervalYearMonth;
 GetVisitor.prototype.visitFixedSizeList = getFixedSizeList;
-GetVisitor.prototype.visitMap = getNested;
+GetVisitor.prototype.visitMap = getMap;
 /** @ignore */
 export const instance = new GetVisitor();
 

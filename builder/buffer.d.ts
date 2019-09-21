@@ -1,5 +1,4 @@
 import { TypedArray, TypedArrayConstructor, BigIntArray, BigIntArrayConstructor } from '../interfaces';
-/** @ignore */ declare type WideArray<T extends BigIntArray> = T extends BigIntArray ? Int32Array : Uint32Array;
 /** @ignore */ declare type DataValue<T> = T extends TypedArray ? number : T extends BigIntArray ? WideValue<T> : T;
 /** @ignore */ declare type WideValue<T extends BigIntArray> = T extends BigIntArray ? bigint | Int32Array | Uint32Array : never;
 /** @ignore */ declare type ArrayCtor<T extends TypedArray | BigIntArray> = T extends TypedArray ? TypedArrayConstructor<T> : T extends BigIntArray ? BigIntArrayConstructor<T> : any;
@@ -48,11 +47,11 @@ export declare class OffsetsBufferBuilder extends DataBufferBuilder<Int32Array> 
     flush(length?: number): Int32Array;
 }
 /** @ignore */
-export declare class WideBufferBuilder<T extends BigIntArray> extends BufferBuilder<WideArray<T>, DataValue<T>> {
-    buffer64: T;
-    constructor(buffer: T, stride: number);
-    readonly ArrayType64: BigIntArrayConstructor<T>;
+export declare class WideBufferBuilder<T extends TypedArray, R extends BigIntArray> extends BufferBuilder<T, DataValue<T>> {
+    buffer64: R;
+    protected _ArrayType64: BigIntArrayConstructor<R>;
+    readonly ArrayType64: BigIntArrayConstructor<R>;
     set(index: number, value: DataValue<T>): this;
-    protected _resize(newLength: number): WideArray<T>;
+    protected _resize(newLength: number): T;
 }
 export {};

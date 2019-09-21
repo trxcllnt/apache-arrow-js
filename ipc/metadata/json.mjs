@@ -160,7 +160,7 @@ function typeFromJSON(f, children) {
         }
         case 'map': {
             const t = f['type'];
-            return new Map_(children || [], t['keysSorted']);
+            return new Map_((children || [])[0], t['keysSorted']);
         }
     }
     throw new Error(`Unrecognized type: "${typeId}"`);

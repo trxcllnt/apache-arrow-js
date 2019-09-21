@@ -16,17 +16,20 @@
 // specific language governing permissions and limitations
 // under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
+const row_1 = require("./row");
 const vector_1 = require("../vector");
 const base_1 = require("./base");
-const row_1 = require("./row");
 const type_1 = require("../type");
 /** @ignore */
 class MapVector extends base_1.BaseVector {
-    asStruct() {
-        return vector_1.Vector.new(this.data.clone(new type_1.Struct(this.type.children)));
+    asList() {
+        const child = this.type.children[0];
+        return vector_1.Vector.new(this.data.clone(new type_1.List(child)));
     }
-    get rowProxy() {
-        return this._rowProxy || (this._rowProxy = row_1.RowProxyGenerator.new(this, this.type.children || [], true));
+    bind(index) {
+        const child = this.getChildAt(0);
+        const { [index]: begin, [index + 1]: end } = this.valueOffsets;
+        return new row_1.MapRow(child.slice(begin, end));
     }
 }
 exports.MapVector = MapVector;

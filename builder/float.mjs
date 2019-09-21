@@ -14,12 +14,17 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+import { float64ToUint16 } from '../util/math';
 import { FixedWidthBuilder } from '../builder';
 /** @ignore */
 export class FloatBuilder extends FixedWidthBuilder {
 }
 /** @ignore */
 export class Float16Builder extends FloatBuilder {
+    setValue(index, value) {
+        // convert JS float64 to a uint16
+        this._values.set(index, float64ToUint16(value));
+    }
 }
 /** @ignore */
 export class Float32Builder extends FloatBuilder {

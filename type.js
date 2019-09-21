@@ -379,7 +379,7 @@ class Struct extends DataType {
         this.children = children;
     }
     get typeId() { return enum_1.Type.Struct; }
-    toString() { return `Struct<[${this.children.map((f) => f.type).join(`, `)}]>`; }
+    toString() { return `Struct<{${this.children.map((f) => `${f.name}:${f.type}`).join(`, `)}}>`; }
 }
 Struct[Symbol.toStringTag] = ((proto) => {
     proto.children = null;
@@ -461,13 +461,15 @@ FixedSizeList[Symbol.toStringTag] = ((proto) => {
 exports.FixedSizeList = FixedSizeList;
 /** @ignore */
 class Map_ extends DataType {
-    constructor(children, keysSorted = false) {
+    constructor(child, keysSorted = false) {
         super();
-        this.children = children;
+        this.children = [child];
         this.keysSorted = keysSorted;
     }
     get typeId() { return enum_1.Type.Map; }
-    toString() { return `Map<{${this.children.map((f) => `${f.name}:${f.type}`).join(`, `)}}>`; }
+    get keyType() { return this.children[0].type.children[0].type; }
+    get valueType() { return this.children[0].type.children[1].type; }
+    toString() { return `Map<{${this.children[0].type.children.map((f) => `${f.name}:${f.type}`).join(`, `)}}>`; }
 }
 Map_[Symbol.toStringTag] = ((proto) => {
     proto.children = null;

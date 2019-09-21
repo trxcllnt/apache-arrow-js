@@ -375,7 +375,7 @@ function decodeFieldType(f, children) {
         }
         case Type.Map: {
             const t = f.type(new Schema_.org.apache.arrow.flatbuf.Map());
-            return new type_1.Map_(children || [], t.keysSorted());
+            return new type_1.Map_((children || [])[0], t.keysSorted());
         }
     }
     throw new Error(`Unrecognized type: "${Type[typeId]}" (${typeId})`);

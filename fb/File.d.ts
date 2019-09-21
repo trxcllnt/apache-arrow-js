@@ -24,12 +24,6 @@ export declare namespace org.apache.arrow.flatbuf {
          */
         static getRootAsFooter(bb: flatbuffers.ByteBuffer, obj?: Footer): Footer;
         /**
-         * @param flatbuffers.ByteBuffer bb
-         * @param Footer= obj
-         * @returns Footer
-         */
-        static getSizePrefixedRootAsFooter(bb: flatbuffers.ByteBuffer, obj?: Footer): Footer;
-        /**
          * @returns org.apache.arrow.flatbuf.MetadataVersion
          */
         version(): NS7624605610262437867.org.apache.arrow.flatbuf.MetadataVersion;
@@ -102,11 +96,6 @@ export declare namespace org.apache.arrow.flatbuf {
          * @param flatbuffers.Offset offset
          */
         static finishFooterBuffer(builder: flatbuffers.Builder, offset: flatbuffers.Offset): void;
-        /**
-         * @param flatbuffers.Builder builder
-         * @param flatbuffers.Offset offset
-         */
-        static finishSizePrefixedFooterBuffer(builder: flatbuffers.Builder, offset: flatbuffers.Offset): void;
         static createFooter(builder: flatbuffers.Builder, version: NS7624605610262437867.org.apache.arrow.flatbuf.MetadataVersion, schemaOffset: flatbuffers.Offset, dictionariesOffset: flatbuffers.Offset, recordBatchesOffset: flatbuffers.Offset): flatbuffers.Offset;
     }
 }

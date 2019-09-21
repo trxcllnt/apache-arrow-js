@@ -16,8 +16,10 @@
 // specific language governing permissions and limitations
 // under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
+const vector_1 = require("../vector");
 const visitor_1 = require("../visitor");
 const utf8_1 = require("../util/utf8");
+const math_1 = require("../util/math");
 const buffer_1 = require("../util/buffer");
 const enum_1 = require("../enum");
 /** @ignore */
@@ -61,7 +63,7 @@ const setDateMillisecond = ({ values }, index, value) => { setEpochMsToMilliseco
 /** @ignore */
 const setNumeric = ({ stride, values }, index, value) => { values[stride * index] = value; };
 /** @ignore */
-const setFloat16 = ({ stride, values }, index, value) => { values[stride * index] = (value * 32767) + 32767; };
+const setFloat16 = ({ stride, values }, index, value) => { values[stride * index] = math_1.float64ToUint16(value); };
 /** @ignore */
 const setNumericX2 = (vector, index, value) => {
     switch (typeof value) {
@@ -146,27 +148,30 @@ const setTime = (vector, index, value) => {
 const setDecimal = ({ values }, index, value) => { values.set(value.subarray(0, 4), 4 * index); };
 /** @ignore */
 const setList = (vector, index, value) => {
-    const values = vector.getChildAt(0);
-    const { valueOffsets } = vector;
-    let idx = -1, offset = valueOffsets[index];
-    let end = Math.min(offset + value.length, valueOffsets[index + 1]);
-    while (offset < end) {
-        values.set(offset++, value.get(++idx));
+    const values = vector.getChildAt(0), valueOffsets = vector.valueOffsets;
+    for (let idx = -1, itr = valueOffsets[index], end = valueOffsets[index + 1]; itr < end;) {
+        values.set(itr++, value.get(++idx));
     }
 };
 /** @ignore */
-const setStruct = (vector, index, value) => {
-    vector.type.children.forEach((_field, idx) => {
-        const child = vector.getChildAt(idx);
-        child && child.set(index, value[idx]);
-    });
-};
-/** @ignore */
 const setMap = (vector, index, value) => {
-    vector.type.children.forEach(({ name }, idx) => {
-        const child = vector.getChildAt(idx);
-        child && child.set(index, value[name]);
-    });
+    const values = vector.getChildAt(0), valueOffsets = vector.valueOffsets;
+    const entries = value instanceof Map ? [...value] : Object.entries(value);
+    for (let idx = -1, itr = valueOffsets[index], end = valueOffsets[index + 1]; itr < end;) {
+        values.set(itr++, entries[++idx]);
+    }
+};
+/** @ignore */ const _setStructArrayValue = (o, v) => (c, _, i) => c && c.set(o, v[i]);
+/** @ignore */ const _setStructVectorValue = (o, v) => (c, _, i) => c && c.set(o, v.get(i));
+/** @ignore */ const _setStructMapValue = (o, v) => (c, f, _) => c && c.set(o, v.get(f.name));
+/** @ignore */ const _setStructObjectValue = (o, v) => (c, f, _) => c && c.set(o, v[f.name]);
+/** @ignore */
+const setStruct = (vector, index, value) => {
+    const setValue = value instanceof Map ? _setStructMapValue(index, value) :
+        value instanceof vector_1.Vector ? _setStructVectorValue(index, value) :
+            Array.isArray(value) ? _setStructArrayValue(index, value) :
+                _setStructObjectValue(index, value);
+    vector.type.children.forEach((f, i) => setValue(vector.getChildAt(i), f, i));
 };
 /* istanbul ignore next */
 /** @ignore */

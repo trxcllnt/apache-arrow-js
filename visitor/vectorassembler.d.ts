@@ -34,7 +34,7 @@ export declare class VectorAssembler extends Visitor {
     /** @nocollapse */
     static assemble<T extends Vector | RecordBatch>(...args: (T | T[])[]): VectorAssembler;
     private constructor();
-    visitNull<T extends Null>(_nullV: V<T>): VectorAssembler;
+    visitNull<T extends Null>(_nullV: V<T>): this;
     visitDictionary<T extends Dictionary>(vector: V<T>): this;
     readonly nodes: FieldNode[];
     readonly buffers: ArrayBufferView[];

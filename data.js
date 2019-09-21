@@ -87,6 +87,9 @@ class Data {
         (!childData.length || this.valueOffsets) ? childData : this._sliceChildren(childData, childStride * offset, childStride * length));
     }
     _changeLengthAndBackfillNullBitmap(newLength) {
+        if (this.typeId === enum_1.Type.Null) {
+            return this.clone(this.type, 0, newLength, 0);
+        }
         const { length, nullCount } = this;
         // start initialized with 0s (nulls), then fill from 0 to length with 1s (not null)
         const bitmap = new Uint8Array(((newLength + 63) & ~63) >> 3).fill(255, 0, length >> 3);
@@ -125,7 +128,7 @@ class Data {
             buffers = [];
         }
         switch (type.typeId) {
-            case enum_1.Type.Null: return Data.Null(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY]);
+            case enum_1.Type.Null: return Data.Null(type, offset, length);
             case enum_1.Type.Int: return Data.Int(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
             case enum_1.Type.Dictionary: return Data.Dictionary(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || [], dictionary);
             case enum_1.Type.Float: return Data.Float(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.DATA] || []);
@@ -141,14 +144,14 @@ class Data {
             case enum_1.Type.List: return Data.List(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.OFFSET] || [], (childData || [])[0]);
             case enum_1.Type.FixedSizeList: return Data.FixedSizeList(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], (childData || [])[0]);
             case enum_1.Type.Struct: return Data.Struct(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], childData || []);
-            case enum_1.Type.Map: return Data.Map(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], childData || []);
+            case enum_1.Type.Map: return Data.Map(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.OFFSET] || [], (childData || [])[0]);
             case enum_1.Type.Union: return Data.Union(type, offset, length, nullCount || 0, buffers[enum_1.BufferType.VALIDITY], buffers[enum_1.BufferType.TYPE] || [], buffers[enum_1.BufferType.OFFSET] || childData, childData);
         }
         throw new Error(`Unrecognized typeId ${type.typeId}`);
     }
     /** @nocollapse */
-    static Null(type, offset, length, nullCount, nullBitmap, _data) {
-        return new Data(type, offset, length, nullCount, [undefined, undefined, buffer_1.toUint8Array(nullBitmap)]);
+    static Null(type, offset, length) {
+        return new Data(type, offset, length, 0);
     }
     /** @nocollapse */
     static Int(type, offset, length, nullCount, nullBitmap, data) {
@@ -211,8 +214,8 @@ class Data {
         return new Data(type, offset, length, nullCount, [undefined, undefined, buffer_1.toUint8Array(nullBitmap)], children);
     }
     /** @nocollapse */
-    static Map(type, offset, length, nullCount, nullBitmap, children) {
-        return new Data(type, offset, length, nullCount, [undefined, undefined, buffer_1.toUint8Array(nullBitmap)], children);
+    static Map(type, offset, length, nullCount, nullBitmap, valueOffsets, child) {
+        return new Data(type, offset, length, nullCount, [buffer_1.toInt32Array(valueOffsets), undefined, buffer_1.toUint8Array(nullBitmap)], [child]);
     }
     /** @nocollapse */
     static Union(type, offset, length, nullCount, nullBitmap, typeIds, valueOffsetsOrChildren, children) {

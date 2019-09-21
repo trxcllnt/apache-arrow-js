@@ -23,10 +23,9 @@ const reader_1 = require("./ipc/reader");
 const type_1 = require("./type");
 const args_1 = require("./util/args");
 const compat_1 = require("./util/compat");
-const recordbatch_2 = require("./util/recordbatch");
-const recordbatch_3 = require("./util/recordbatch");
-const index_1 = require("./vector/index");
 const writer_1 = require("./ipc/writer");
+const recordbatch_2 = require("./util/recordbatch");
+const index_1 = require("./vector/index");
 class Table extends index_1.Chunked {
     constructor(...args) {
         let schema = null;
@@ -38,7 +37,7 @@ class Table extends index_1.Chunked {
             throw new TypeError('Table must be initialized with a Schema or at least one RecordBatch');
         }
         chunks[0] || (chunks[0] = new recordbatch_1._InternalEmptyPlaceholderRecordBatch(schema));
-        super(new type_1.Map_(schema.fields), chunks);
+        super(new type_1.Struct(schema.fields), chunks);
         this._schema = schema;
         this._chunks = chunks;
     }
@@ -80,10 +79,6 @@ class Table extends index_1.Chunked {
     /** @nocollapse */
     static async fromAsync(source) {
         return await Table.from(source);
-    }
-    /** @nocollapse */
-    static fromMap(vector) {
-        return Table.new(vector.data.childData, vector.type.children);
     }
     /** @nocollapse */
     static fromStruct(vector) {
@@ -162,26 +157,20 @@ class Table extends index_1.Chunked {
             ...fields.map((_f, i, _fs, j = oldToNew[i]) => (j === undefined ? this.getColumnAt(i) : other.getColumnAt(j))),
             ...indices.map((i) => other.getColumnAt(i))
         ].filter(Boolean);
-        return new Table(...recordbatch_3.distributeVectorsIntoRecordBatches(schema, columns));
+        return new Table(...recordbatch_2.distributeVectorsIntoRecordBatches(schema, columns));
     }
 }
 exports.Table = Table;
 function tableFromIterable(input) {
     const { type } = input;
-    if (type instanceof type_1.Map_) {
-        return Table.fromMap(index_1.MapVector.from(input));
-    }
-    else if (type instanceof type_1.Struct) {
+    if (type instanceof type_1.Struct) {
         return Table.fromStruct(index_1.StructVector.from(input));
     }
     return null;
 }
 function tableFromAsyncIterable(input) {
     const { type } = input;
-    if (type instanceof type_1.Map_) {
-        return index_1.MapVector.from(input).then((vector) => Table.fromMap(vector));
-    }
-    else if (type instanceof type_1.Struct) {
+    if (type instanceof type_1.Struct) {
         return index_1.StructVector.from(input).then((vector) => Table.fromStruct(vector));
     }
     return null;

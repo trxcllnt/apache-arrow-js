@@ -21,11 +21,11 @@ import { Visitor } from './visitor';
 import { Schema } from './schema';
 import { isIterable } from './util/compat';
 import { Chunked } from './vector/chunked';
-import { MapVector } from './vector/index';
 import { selectFieldArgs } from './util/args';
-import { DataType, Map_ } from './type';
+import { DataType, Struct } from './type';
 import { ensureSameLengthData } from './util/recordbatch';
-export class RecordBatch extends MapVector {
+import { StructVector } from './vector/index';
+export class RecordBatch extends StructVector {
     constructor(...args) {
         let data;
         let schema = args[0];
@@ -36,7 +36,7 @@ export class RecordBatch extends MapVector {
         else {
             const fields = schema.fields;
             const [, length, childData] = args;
-            data = Data.Map(new Map_(fields), 0, length, 0, null, childData);
+            data = Data.Struct(new Struct(fields), 0, length, 0, null, childData);
         }
         super(data, children);
         this._schema = schema;
@@ -97,7 +97,7 @@ class DictionaryCollector extends Visitor {
         this.dictionaries = new Map();
     }
     static collect(batch) {
-        return new DictionaryCollector().visit(batch.data, new Map_(batch.schema.fields)).dictionaries;
+        return new DictionaryCollector().visit(batch.data, new Struct(batch.schema.fields)).dictionaries;
     }
     visit(data, type) {
         if (DataType.isDictionary(type)) {

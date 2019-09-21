@@ -14,7 +14,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-export { Row } from './row';
 export { Vector } from '../vector';
 export { BaseVector } from './base';
 export { BinaryVector } from './binary';
@@ -36,6 +35,7 @@ export { TimestampVector, TimestampSecondVector, TimestampMillisecondVector, Tim
 export { TimeVector, TimeSecondVector, TimeMillisecondVector, TimeMicrosecondVector, TimeNanosecondVector } from './time';
 export { UnionVector, DenseUnionVector, SparseUnionVector } from './union';
 export { Utf8Vector } from './utf8';
+export { MapRow, StructRow } from './row';
 import * as fn from '../util/fn';
 import { Type } from '../enum';
 import { Vector } from '../vector';

@@ -16,8 +16,6 @@
 // specific language governing permissions and limitations
 // under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
-var row_1 = require("./row");
-exports.Row = row_1.Row;
 var vector_1 = require("../vector");
 exports.Vector = vector_1.Vector;
 var base_1 = require("./base");
@@ -85,6 +83,9 @@ exports.DenseUnionVector = union_1.DenseUnionVector;
 exports.SparseUnionVector = union_1.SparseUnionVector;
 var utf8_1 = require("./utf8");
 exports.Utf8Vector = utf8_1.Utf8Vector;
+var row_1 = require("./row");
+exports.MapRow = row_1.MapRow;
+exports.StructRow = row_1.StructRow;
 const fn = require("../util/fn");
 const enum_1 = require("../enum");
 const vector_2 = require("../vector");

@@ -16,6 +16,7 @@
 // specific language governing permissions and limitations
 // under the License.
 Object.defineProperty(exports, "__esModule", { value: true });
+const math_1 = require("../util/math");
 const builder_1 = require("../builder");
 /** @ignore */
 class FloatBuilder extends builder_1.FixedWidthBuilder {
@@ -23,6 +24,10 @@ class FloatBuilder extends builder_1.FixedWidthBuilder {
 exports.FloatBuilder = FloatBuilder;
 /** @ignore */
 class Float16Builder extends FloatBuilder {
+    setValue(index, value) {
+        // convert JS float64 to a uint16
+        this._values.set(index, math_1.float64ToUint16(value));
+    }
 }
 exports.Float16Builder = Float16Builder;
 /** @ignore */

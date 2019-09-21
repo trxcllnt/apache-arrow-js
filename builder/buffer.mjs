@@ -15,7 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 import { memcpy } from '../util/buffer';
-import { BigInt64Array, BigUint64Array } from '../util/compat';
+import { BigIntAvailable, BigInt64Array, BigUint64Array } from '../util/compat';
 /** @ignore */
 const roundLengthUpToNearest64Bytes = (len, BPE) => ((((len * BPE) + 63) & ~63) || 64) / BPE;
 /** @ignore */
@@ -71,7 +71,7 @@ export class DataBufferBuilder extends BufferBuilder {
     get(index) { return this.buffer[index]; }
     set(index, value) {
         this.reserve(index - this.length + 1);
-        this.buffer[index] = value;
+        this.buffer[index * this.stride] = value;
         return this;
     }
 }
@@ -121,13 +121,8 @@ export class OffsetsBufferBuilder extends DataBufferBuilder {
 }
 /** @ignore */
 export class WideBufferBuilder extends BufferBuilder {
-    // @ts-ignore
-    constructor(buffer, stride) {
-        const ArrayType = buffer instanceof BigInt64Array ? Int32Array : Uint32Array;
-        super(new ArrayType(buffer.buffer, buffer.byteOffset, buffer.byteLength / 4), stride);
-    }
     get ArrayType64() {
-        return this.buffer instanceof Int32Array ? BigInt64Array : BigUint64Array;
+        return this._ArrayType64 || (this._ArrayType64 = (this.buffer instanceof Int32Array ? BigInt64Array : BigUint64Array));
     }
     set(index, value) {
         this.reserve(index - this.length + 1);
@@ -145,7 +140,9 @@ export class WideBufferBuilder extends BufferBuilder {
     _resize(newLength) {
         const data = super._resize(newLength);
         const length = data.byteLength / (this.BYTES_PER_ELEMENT * this.stride);
-        this.buffer64 = new this.ArrayType64(data.buffer, data.byteOffset, length);
+        if (BigIntAvailable) {
+            this.buffer64 = new this.ArrayType64(data.buffer, data.byteOffset, length);
+        }
         return data;
     }
 }

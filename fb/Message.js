@@ -157,14 +157,6 @@ var org;
                         return (obj || new RecordBatch).__init(bb.readInt32(bb.position()) + bb.position(), bb);
                     }
                     /**
-                     * @param flatbuffers.ByteBuffer bb
-                     * @param RecordBatch= obj
-                     * @returns RecordBatch
-                     */
-                    static getSizePrefixedRootAsRecordBatch(bb, obj) {
-                        return (obj || new RecordBatch).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-                    }
-                    /**
                      * number of records / rows. The arrays in the batch should all have this
                      * length
                      *
@@ -318,14 +310,6 @@ var org;
                         return (obj || new DictionaryBatch).__init(bb.readInt32(bb.position()) + bb.position(), bb);
                     }
                     /**
-                     * @param flatbuffers.ByteBuffer bb
-                     * @param DictionaryBatch= obj
-                     * @returns DictionaryBatch
-                     */
-                    static getSizePrefixedRootAsDictionaryBatch(bb, obj) {
-                        return (obj || new DictionaryBatch).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-                    }
-                    /**
                      * @returns flatbuffers.Long
                      */
                     id() {
@@ -429,14 +413,6 @@ var org;
                      * @returns Message
                      */
                     static getRootAsMessage(bb, obj) {
-                        return (obj || new Message).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-                    }
-                    /**
-                     * @param flatbuffers.ByteBuffer bb
-                     * @param Message= obj
-                     * @returns Message
-                     */
-                    static getSizePrefixedRootAsMessage(bb, obj) {
                         return (obj || new Message).__init(bb.readInt32(bb.position()) + bb.position(), bb);
                     }
                     /**
@@ -558,13 +534,6 @@ var org;
                      */
                     static finishMessageBuffer(builder, offset) {
                         builder.finish(offset);
-                    }
-                    /**
-                     * @param flatbuffers.Builder builder
-                     * @param flatbuffers.Offset offset
-                     */
-                    static finishSizePrefixedMessageBuffer(builder, offset) {
-                        builder.finish(offset, undefined);
                     }
                     static createMessage(builder, version, headerType, headerOffset, bodyLength, customMetadataOffset) {
                         Message.startMessage(builder);

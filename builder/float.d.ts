@@ -5,6 +5,7 @@ export declare class FloatBuilder<T extends Float = Float, TNull = any> extends 
 }
 /** @ignore */
 export declare class Float16Builder<TNull = any> extends FloatBuilder<Float16, TNull> {
+    setValue(index: number, value: number): void;
 }
 /** @ignore */
 export declare class Float32Builder<TNull = any> extends FloatBuilder<Float32, TNull> {
